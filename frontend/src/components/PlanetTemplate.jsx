@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import '../css/estrellas.css'; 
-import '../css/planeta.css'; 
+import { useLocation } from "react-router-dom"; // ← para leer planetKey desde el NavBar
+import "../css/estrellas.css";
+import "../css/planeta.css";
 
 // Catálogo base
 export const PLANETS = {
@@ -12,6 +13,41 @@ export const PLANETS = {
   },
   mars: {
     planetName: "Marte",
+    description:
+      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+    planetImageUrl: undefined,
+  },
+  saturn: {
+    planetName: "Saturno",
+    description:
+      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+    planetImageUrl: undefined,
+  },
+  mercury: {
+    planetName: "Mercurio",
+    description:
+      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+    planetImageUrl: undefined,
+  },
+  venus: {
+    planetName: "Venus",
+    description: "venusvenusvens.",
+    planetImageUrl: undefined,
+  },
+  earth: {
+    planetName: "Tierra",
+    description:
+      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+    planetImageUrl: undefined,
+  },
+  uranus: {
+    planetName: "Urano",
+    description:
+      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+    planetImageUrl: undefined,
+  },
+  neptune: {
+    planetName: "Neptuno",
     description:
       "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
     planetImageUrl: undefined,
@@ -37,87 +73,100 @@ Reglas:
 }
 
 export default function PlanetTemplate({
-  planetKey = "mars",
+  planetKey = "venus",
   planetName,
   description,
   questionLabel,
   placeholder,
   sendLabel = "",
   // onSubmit por defecto que llama a tu backend
-onSubmit = async (value, ctx) => {
-  if (!value?.trim()) return;
+  onSubmit = async (value, ctx) => {
+    if (!value?.trim()) return;
 
-  // helpers: obtener/crear el chat y añadir mensajes
-  const ensureChatBox = () => {
-    let box = document.getElementById("chat-box");
-    if (!box) {
-      box = document.createElement("section");
-      box.id = "chat-box";
-      box.className = "chat-box";
-      const qa = document.querySelector(".planet-root .qa");
-      (qa?.parentNode || document.body).insertBefore(box, qa || null);
+    // helpers: obtener/crear el chat y añadir mensajes
+    const ensureChatBox = () => {
+      let box = document.getElementById("chat-box");
+      if (!box) {
+        box = document.createElement("section");
+        box.id = "chat-box";
+        box.className = "chat-box";
+        const qa = document.querySelector(".planet-root .qa");
+        (qa?.parentNode || document.body).insertBefore(box, qa || null);
+      }
+      return box;
+    };
+    const appendMsg = (role, text) => {
+      const box = ensureChatBox();
+      const row = document.createElement("div");
+      row.className = `chat-row ${role}`;
+      const msg = document.createElement("div");
+      msg.className = "chat-msg";
+      msg.textContent = text;
+      row.appendChild(msg);
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    };
+    const appendUser = (t) => appendMsg("user", t);
+    const appendBot = (t) => appendMsg("bot", t);
+
+    // pinta primero lo que escribió el usuario
+    appendUser(value);
+
+    // lógica de restricción por planeta (igual que tenías)
+    const { activePlanetName, otherPlanetAliases } = ctx || {};
+    const text = value.toLowerCase();
+    const mentionsOther = otherPlanetAliases?.some((alias) =>
+      text.includes(alias)
+    );
+    if (mentionsOther) {
+      appendBot(`Solo puedo hablar sobre ${activePlanetName}.`);
+      return;
     }
-    return box;
-  };
-  const appendMsg = (role, text) => {
-    const box = ensureChatBox();
-    const row = document.createElement("div");
-    row.className = `chat-row ${role}`;
-    const msg = document.createElement("div");
-    msg.className = "chat-msg";
-    msg.textContent = text;
-    row.appendChild(msg);
-    box.appendChild(row);
-    box.scrollTop = box.scrollHeight;
-  };
-  const appendUser = (t) => appendMsg("user", t);
-  const appendBot  = (t) => appendMsg("bot",  t);
 
-  // pinta primero lo que escribió el usuario
-  appendUser(value);
+    // system + prompt
+    const system = buildSystemPrompt(activePlanetName);
+    const userPrompt = `Pregunta del usuario: ${value}`;
 
-  // lógica de restricción por planeta (igual que tenías)
-  const { activePlanetName, otherPlanetAliases } = ctx || {};
-  const text = value.toLowerCase();
-  const mentionsOther = otherPlanetAliases?.some((alias) => text.includes(alias));
-  if (mentionsOther) {
-    appendBot(`Solo puedo hablar sobre ${activePlanetName}.`);
-    return;
-  }
-
-  // system + prompt
-  const system = buildSystemPrompt(activePlanetName);
-  const userPrompt = `Pregunta del usuario: ${value}`;
-
-  try {
-    const res = await fetch("http://localhost:3000/chat", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ prompt: `${system}\n\n${userPrompt}` })
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const { text: answer } = await res.json();
-    appendBot(answer || `Solo puedo hablar de ${activePlanetName}.`);
-  } catch (e) {
-    appendBot(`Error: ${e.message}`);
-  }
+    try {
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: `${system}\n\n${userPrompt}` }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { text: answer } = await res.json();
+      appendBot(answer || `Solo puedo hablar de ${activePlanetName}.`);
+    } catch (e) {
+      appendBot(`Error: ${e.message}`);
+    }
   },
   planetImageUrl,
   spaceBgUrl,
 }) {
   const [value, setValue] = useState("");
 
-  const base = PLANETS[planetKey] || PLANETS.jupiter;
+  // === lee planetKey mandado desde el NavBar.jsx vía state ===
+  const { state } = useLocation();
+  const fromNav = state?.planetKey; // 'jupiter' | 'mars' | ...
+
+  // usa el que llega del NavBar si existe en el catálogo, si no el prop/default
+  const effectivePlanetKey =
+    fromNav && PLANETS[fromNav] ? fromNav : planetKey;
+
+  const base = PLANETS[effectivePlanetKey] || PLANETS.jupiter;
+
   const final = {
     planetName: planetName ?? base.planetName,
     description: description ?? base.description,
-    questionLabel: questionLabel ?? `Pregunta acerca de ${planetName ?? base.planetName}`,
+    questionLabel:
+      questionLabel ?? `Pregunta acerca de ${planetName ?? base.planetName}`,
     placeholder: placeholder ?? "Escribe tu pregunta…",
     planetImageUrl: planetImageUrl ?? base.planetImageUrl,
   };
 
   // NUEVO: prepara lista de alias del planeta activo y de “otros”
-  const activeAliases = PLANET_ALIASES[final.planetName] || [final.planetName.toLowerCase()];
+  const activeAliases =
+    PLANET_ALIASES[final.planetName] || [final.planetName.toLowerCase()];
   const otherPlanetAliases = Object.keys(PLANET_ALIASES)
     .filter((p) => p !== final.planetName)
     .flatMap((p) => PLANET_ALIASES[p])
@@ -125,11 +174,11 @@ onSubmit = async (value, ctx) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // NUEVO: pasamos contexto al onSubmit por si lo necesita (no rompe compatibilidad)
+    // pasamos contexto al onSubmit por si lo necesita
     onSubmit?.(value, {
       activePlanetName: final.planetName,
       activeAliases,
-      otherPlanetAliases
+      otherPlanetAliases,
     });
     setValue("");
   };
@@ -140,12 +189,17 @@ onSubmit = async (value, ctx) => {
         className="canvas"
         style={{
           ...(spaceBgUrl ? { ["--space-bg"]: `url(${spaceBgUrl})` } : {}),
-          ...(final.planetImageUrl ? { ["--planet-image"]: `url(${final.planetImageUrl})` } : {}),
+          ...(final.planetImageUrl
+            ? { ["--planet-image"]: `url(${final.planetImageUrl})` }
+            : {}),
         }}
       >
         <h1 className="title">{final.planetName}</h1>
 
-        <div className="planet-slot" aria-label={`Imagen de ${final.planetName}`} />
+        <div
+          className="planet-slot"
+          aria-label={`Imagen de ${final.planetName}`}
+        />
 
         <aside className="desc">
           <p>{final.description}</p>
@@ -162,7 +216,10 @@ onSubmit = async (value, ctx) => {
             />
             <button className="send" aria-label="enviar" title="Enviar">
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden>
-                <path d="M2 3l20 9-20 9 5-9-5-9zm5 9l3 3 8-3-8-3-3 3z" fill="currentColor" />
+                <path
+                  d="M2 3l20 9-20 9 5-9-5-9zm5 9l3 3 8-3-8-3-3 3z"
+                  fill="currentColor"
+                />
               </svg>
               {sendLabel}
             </button>

@@ -17,9 +17,26 @@ function NavBar() {
         <li>
           <Link to="/about">About Us</Link>
         </li>
-        <li>
-          <Link to="/PlanetTemplate">Planetas</Link>
+
+        <li className="has-submenu">
+          {/* Link principal a la vista general de Planetas */}
+          <Link to="/PlanetTemplate" className="submenu-toggle" aria-haspopup="true" aria-expanded="false">
+            Planetas
+          </Link>
+
+          {/* Submenú */}
+          <ul className="submenu" role="menu">
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'jupiter' }}>Júpiter</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'mars' }}>Marte</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'saturn' }}>Saturno</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'mercury' }}>Mercurio</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'venus' }}>Venus</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'earth' }}>Tierra</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'uranus' }}>Urano</Link></li>
+            <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'neptune' }}>Neptuno</Link></li>
+          </ul>
         </li>
+
         <li>
           <Link to="/Satelite">Satelite</Link>
         </li>
