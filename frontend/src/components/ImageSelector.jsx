@@ -55,7 +55,7 @@ export default function ImageSelector({ src }) {
         alt="Selectable"
         className="splash-image max-w-full h-auto block"
         style={{
-          transform: isZoomed ? "scale(2)" : "scale(1)",
+          transform: isZoomed ? "scale(3)" : "scale(1)",
           transition: "transform 0.4s ease",
           transformOrigin: "center center",
         }}

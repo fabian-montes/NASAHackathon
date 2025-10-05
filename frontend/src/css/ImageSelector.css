@@ -1,16 +1,14 @@
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    height: 300px;
+  position: relative;       /* For absolute positioning of the rectangle */
+  display: inline-block;
+  max-width: 80%;          /* Container won't exceed parent width */
+  overflow: hidden;         /* Prevent rectangle from overflowing */
+  bottom: 0;
 }
 
 .splash-image {
-  position: relative;
-  width: 98%;   /* takes full container width */
-  height: auto;  /* keeps aspect ratio */
   display: block;
-  margin-bottom: 130px;
+  width: 100%;              /* Image scales with container */
+  height: auto;
   -webkit-user-drag: none;
 }
