@@ -18,16 +18,32 @@ export const PLANETS = {
 };
 
 export default function PlanetTemplate({
-  planetKey = "jupiter",             // por defecto se ve Júpiter
+  planetKey = "jupiter",
   planetName,
   description,
   questionLabel,
   placeholder,
   sendLabel = "",
-  onSubmit = (value) => alert(value),
+  // NUEVO: onSubmit por defecto que llama a tu backend y alerta la respuesta
+  onSubmit = async (value) => {
+    if (!value?.trim()) return;
+    try {
+      const res = await fetch("http://localhost:3000/chat", {   // <-- NO uses solo "/chat"
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: value })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { text } = await res.json();
+      alert(text || "(sin respuesta)");
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
+  },
   planetImageUrl,
   spaceBgUrl,
 }) {
+
   const [value, setValue] = useState("");
 
   const base = PLANETS[planetKey] || PLANETS.jupiter;
