@@ -51,63 +51,57 @@ function createCelestialBody(bodyData, textureLoader) {
         },
         undefined,
         () => {
-            console.error(`Failed to load texture for ${name}. Falling back to color.`);
-            material.color.set(color);
+            console.error(`Failed to load texture for ${name}. Falling back to color.`)
+            material.color.set(color)
         }
-    );
-    return mesh;
+    )
+    return mesh
 }
 
 function createLighting() {
-    const lightGroup = new THREE.Group();
-    const sunLight = new THREE.PointLight(0xffffff, 500, 0);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
-    lightGroup.add(sunLight, ambientLight);
-    return lightGroup;
+    const lightGroup = new THREE.Group()
+    const sunLight = new THREE.PointLight(0xffffff, 500, 0)
+    sunLight.castShadow = true
+    sunLight.shadow.mapSize.width = 2048
+    sunLight.shadow.mapSize.height = 2048
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25)
+    lightGroup.add(sunLight, ambientLight)
+    return lightGroup
 }
 
-// 1. NEW: Helper function to create orbital lines
 /**
- * Creates a circular orbit line.
- * @param {number} distance - The distance from the center (orbital radius).
- * @returns {THREE.LineLoop} A Three.js LineLoop object.
+ * @param {number} distance
+ * @returns {THREE.LineLoop}
  */
 function createOrbit(distance) {
-    const points = [];
-    const radius = distance / SCALING_FACTOR.distance;
-    // A higher segment count makes the circle smoother
-    const segments = 128; 
+    const points = []
+    const radius = distance / SCALING_FACTOR.distance
+    const segments = 128
     for (let i = 0; i <= segments; i++) {
-        const theta = (i / segments) * Math.PI * 2;
-        points.push(new THREE.Vector3(Math.cos(theta) * radius, Math.sin(theta) * radius, 0));
+        const theta = (i / segments) * Math.PI * 2
+        points.push(new THREE.Vector3(Math.cos(theta) * radius, Math.sin(theta) * radius, 0))
     }
     
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points)
     const material = new THREE.LineBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.2, // Faint and unobtrusive
-    });
+        opacity: 0.2,
+    })
     
-    return new THREE.LineLoop(geometry, material);
+    return new THREE.LineLoop(geometry, material)
 }
 
-// 2. NEW: Helper function to create a starfield
 /**
- * Creates a starfield background.
- * @returns {THREE.Points} A Three.js Points object.
+ * @returns {THREE.Points}
  */
 function createStars() {
-    const starVertices = [];
+    const starVertices = []
     for (let i = 0; i < 10000; i++) {
-        // Use a helper to spread the stars randomly within a cube
-        const x = THREE.MathUtils.randFloatSpread(2000);
-        const y = THREE.MathUtils.randFloatSpread(2000);
-        const z = THREE.MathUtils.randFloatSpread(2000);
-        starVertices.push(x, y, z);
+        const x = THREE.MathUtils.randFloatSpread(2000)
+        const y = THREE.MathUtils.randFloatSpread(2000)
+        const z = THREE.MathUtils.randFloatSpread(2000)
+        starVertices.push(x, y, z)
     }
 
     const geometry = new THREE.BufferGeometry();
