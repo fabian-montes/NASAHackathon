@@ -1,6 +1,7 @@
 import React, { useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useTexture, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 
 /**
  * Renders a 3D sphere with a custom texture that spins.
@@ -60,30 +61,32 @@ function OrbitingSphere({
   size = 0.8,
   orbitRadius = 6,
   orbitSpeed = 0.005,
+  direction = 1,
 }) {
   const meshRef = useRef();
   const colorMap = useTexture(imageUrl);
 
   // Use a ref to store the current orbital angle (theta)
-  const angle = useRef(0);
+  // const angle = useRef(0);
+  const angle = useRef(Math.random() * Math.PI * 2); // Start at a random angle to spread them out
 
   useFrame(({ clock }) => {
     if (meshRef.current) {
-      // 1. **Self-Rotation (Spin)**
-      meshRef.current.rotation.y += spinSpeed;
-
-      // 2. **Orbit Calculation**
+      // 1. **Orbit Calculation**
       // Increase the angle based on the orbit speed
-      angle.current += orbitSpeed; 
-
-      // Use sin/cos for circular motion (X and Z plane)
-      // The position is calculated relative to the parent's (the main sphere's) center.
+      angle.current += orbitSpeed * direction;
+      
+      // 2. **Self-Rotation (Spin)**
+      // meshRef.current.rotation.y += spinSpeed;
       const x = orbitRadius * Math.cos(angle.current);
       const z = orbitRadius * Math.sin(angle.current);
 
       // Apply the new position
       meshRef.current.position.x = x;
       meshRef.current.position.z = z;
+
+      // 2. **Self-Rotation** (Optional, but good for planets)
+      meshRef.current.rotation.y += 0.03; 
     }
   });
 
@@ -115,7 +118,7 @@ function OrbitingSphere({
  */
 export default function SpinningSphere({ 
   imageUrl, 
-  orbitImageUrl, // New prop for the orbiting sphere's texture
+  orbitConfigs = [], // New prop for the orbiting sphere's texture
   spinSpeed, 
   size,
   canvasClassName 
@@ -145,12 +148,17 @@ export default function SpinningSphere({
         {/* The Orbiting Sphere (The 'moon') */}
         {/* It is placed at the origin (0,0,0) of its parent, which is the center of the scene.
             Its movement is handled internally by its useFrame hook. */}
-        {orbitImageUrl && (
+        {/* Render all orbiting spheres using the provided array */}
+        {orbitConfigs.map((config, index) => (
           <OrbitingSphere 
-            imageUrl={orbitImageUrl}
-            // You can optionally pass in other props like orbitRadius, size, etc.
+            key={index} // Use index as a key (safe here since the array order won't change)
+            imageUrl={config.imageUrl}
+            orbitRadius={config.radius} // Map 'radius' from config to 'orbitRadius' prop
+            orbitSpeed={config.speed}   // Map 'speed' from config to 'orbitSpeed' prop
+            direction={config.direction} // Map 'direction' from config
+            size={config.size}         // Optional size
           />
-        )}
+        ))}
       </Suspense>
     </Canvas>
   );
