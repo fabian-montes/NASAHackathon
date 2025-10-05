@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom"; // ← para leer planetKey desde el NavBar
 import "../css/estrellas.css";
 import "../css/planeta.css";
+import PlanetRenderer from "./PlanetRenderer";
 
 // Catálogo base
-export const PLANETS = {
+const PLANETS = {
   jupiter: {
     planetName: "Jupiter",
     description:
@@ -155,6 +156,8 @@ export default function PlanetTemplate({
 
   const base = PLANETS[effectivePlanetKey] || PLANETS.jupiter;
 
+  console.log('base', base)
+
   const final = {
     planetName: planetName ?? base.planetName,
     description: description ?? base.description,
@@ -217,7 +220,9 @@ export default function PlanetTemplate({
         <div
           className="planet-slot"
           aria-label={`Imagen de ${final.planetName}`}
-        />
+        >
+            <PlanetRenderer planet={base.planetName.toLowerCase()} />
+        </div>
 
         <aside className="desc">
           <p>{final.description}</p>
