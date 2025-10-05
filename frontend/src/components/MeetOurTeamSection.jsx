@@ -8,33 +8,33 @@ import planetB from '../assets/planetB.jpg';
 import planetC from '../assets/planetC.jpg';
 import planetD from '../assets/planetD.jpg';
 
-// import aylinFile from './assets/aylin.jpg';
-// import karlaFile from './assets/karla.jpg';
-// import adyleneFile from './assets/adylene.jpg';
-// import blancaFile from './assets/blanca.jpg';
+import aylinFile from '../assets/aylin.png';
+import karlaFile from '../assets/karla.png';
+import adyFile from '../assets/ady.png';
+import blancaFile from '../assets/blanca.png';
 import fabianFile from '../assets/fabian.png';
-// import juanFile from './assets/juan.jpg';
+import juanFile from '../assets/juan.png';
 
 const teamMembers = [
   {
     name: "Aylin Ximena Ocampo Vera",
     backgroundFile: planetD,
-    mainImageFile: fabianFile
+    mainImageFile: aylinFile
   },
   {
     name: "Karla Irais De Florencio Romero",
     backgroundFile: planetB,
-    mainImageFile: fabianFile
+    mainImageFile: karlaFile
   },
   {
     name: "Adylene Baylon Cuahutlapantzi",
     backgroundFile: planetA,
-    mainImageFile: fabianFile
+    mainImageFile: adyFile
   },
   {
     name: "Blanca Flor Visca Cocotzin",
     backgroundFile: planetB,
-    mainImageFile: fabianFile
+    mainImageFile: blancaFile
   },
   {
     name: "Fabián Márquez Montes",
@@ -44,14 +44,14 @@ const teamMembers = [
   {
     name: "Juan Diego Vázquez Cabrera",
     backgroundFile: planetA,
-    mainImageFile: fabianFile
+    mainImageFile: juanFile
   },
 ];
 
 const MeetOurTeamSection = () => {
   return (
     <div className="meet-our-team-container">
-      <h1>Nuestro Equipo</h1>
+      <h1>Our Teammates</h1>
       <div className="profile-cards-grid">
         {teamMembers.map((member, index) => (
           <ProfileCard

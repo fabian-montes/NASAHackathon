@@ -8,7 +8,6 @@ import '../css/estrellas.css'
 function About() {
   return (
     <>
-      <h1>Nosotros</h1>
       <MeetOurTeamSection/>
       <AboutProjectSection/>
     </>
