@@ -44,38 +44,63 @@ export default function PlanetTemplate({
   placeholder,
   sendLabel = "",
   // onSubmit por defecto que llama a tu backend
-  onSubmit = async (value, ctx) => {
-    if (!value?.trim()) return;
+onSubmit = async (value, ctx) => {
+  if (!value?.trim()) return;
 
-    // NUEVO: filtro local — si detecta otros planetas, evita gastar tokens
-    const { activePlanetName, otherPlanetAliases } = ctx || {};
-    const text = value.toLowerCase();
-    const mentionsOther = otherPlanetAliases?.some((alias) => text.includes(alias));
-    if (mentionsOther) {
-      alert(`Solo puedo hablar sobre ${activePlanetName}.`);
-      return;
+  // helpers: obtener/crear el chat y añadir mensajes
+  const ensureChatBox = () => {
+    let box = document.getElementById("chat-box");
+    if (!box) {
+      box = document.createElement("section");
+      box.id = "chat-box";
+      box.className = "chat-box";
+      const qa = document.querySelector(".planet-root .qa");
+      (qa?.parentNode || document.body).insertBefore(box, qa || null);
     }
+    return box;
+  };
+  const appendMsg = (role, text) => {
+    const box = ensureChatBox();
+    const row = document.createElement("div");
+    row.className = `chat-row ${role}`;
+    const msg = document.createElement("div");
+    msg.className = "chat-msg";
+    msg.textContent = text;
+    row.appendChild(msg);
+    box.appendChild(row);
+    box.scrollTop = box.scrollHeight;
+  };
+  const appendUser = (t) => appendMsg("user", t);
+  const appendBot  = (t) => appendMsg("bot",  t);
 
-    // NUEVO: empaquetar system + pregunta para que el backend quede “anclado”
-    const system = buildSystemPrompt(activePlanetName);
-    const userPrompt = `Pregunta del usuario: ${value}`;
+  // pinta primero lo que escribió el usuario
+  appendUser(value);
 
-    try {
-      const res = await fetch("http://localhost:3000/chat", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          // Mandamos system primero y luego la pregunta del usuario, ya en tu backend
-          // se envía como 'prompt' único; el guardado fuerte ideal es replicar el system ahí.
-          prompt: `${system}\n\n${userPrompt}`
-        })
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { text: answer } = await res.json();
-      alert(answer || 'Hola! Solo puedo hablar de ${activePlanetName}. ');
-    } catch (e) {
-      alert("Error: " + e.message);
-    }
+  // lógica de restricción por planeta (igual que tenías)
+  const { activePlanetName, otherPlanetAliases } = ctx || {};
+  const text = value.toLowerCase();
+  const mentionsOther = otherPlanetAliases?.some((alias) => text.includes(alias));
+  if (mentionsOther) {
+    appendBot(`Solo puedo hablar sobre ${activePlanetName}.`);
+    return;
+  }
+
+  // system + prompt
+  const system = buildSystemPrompt(activePlanetName);
+  const userPrompt = `Pregunta del usuario: ${value}`;
+
+  try {
+    const res = await fetch("http://localhost:3000/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prompt: `${system}\n\n${userPrompt}` })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const { text: answer } = await res.json();
+    appendBot(answer || `Solo puedo hablar de ${activePlanetName}.`);
+  } catch (e) {
+    appendBot(`Error: ${e.message}`);
+  }
   },
   planetImageUrl,
   spaceBgUrl,

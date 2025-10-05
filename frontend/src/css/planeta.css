@@ -82,6 +82,9 @@
   display: grid;
   grid-template-columns: 1fr 56px;
   gap: 10px;
+  width: 58%;           /* < 60% como pediste */
+  justify-self: start;  /* lo “pega” al lado izquierdo dentro del grid */
+  text-align: left;
 }
 .planet-root .inputRow input {
   height: 56px;
@@ -94,7 +97,9 @@
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.25) inset;
 }
-.planet-root .inputRow input::placeholder { color: rgba(255,255,255,0.75); }
+.planet-root .inputRow input::placeholder {
+  color: rgba(255,255,255,0.75);
+}
 
 .planet-root .send {
   border: 1px solid var(--panel-bd);
@@ -110,3 +115,40 @@
 
 /* Contenedor invisible; no necesita estilos, pero por compatibilidad: */
 .planet-root .canvas { position: absolute; inset: 0; }
+
+/* Panel de chat: esquina inferior derecha */
+.planet-root .chat-box {
+  position: absolute;
+  right: 5.56vw;
+  bottom: 9.63vh;
+  width: min(28vw, 380px);
+  max-height: 42vh;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-bd);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--txt);
+  pointer-events: auto;
+}
+
+/* Filas y burbujas */
+.planet-root .chat-row { display: flex; margin-bottom: 8px; }
+.planet-root .chat-row.user { justify-content: flex-end; }
+.planet-root .chat-row.bot  { justify-content: flex-start; }
+.planet-root .chat-msg {
+  max-width: 82%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.12);
+}
+.planet-root .chat-row.user .chat-msg {
+  background: rgba(96,165,250,.25);
+  border-color: rgba(96,165,250,.35);
+}
+
+
+
+
