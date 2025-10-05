@@ -18,7 +18,7 @@ export default function SplashScreen({ onClose }) {
       <div className="splash-content">
         <h1 className="splash-logo">🚀 MyApp</h1>
         <button className="splash-close" onClick={handleClose}>
-          Close
+          X
         </button>
       </div>
     </div>

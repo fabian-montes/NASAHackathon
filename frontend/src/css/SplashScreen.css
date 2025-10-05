@@ -21,10 +21,13 @@
 }
 
 .splash-close {
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 50%;
   background-color: black;
   color: white;
   cursor: pointer;

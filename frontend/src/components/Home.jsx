@@ -5,36 +5,34 @@ import SplashScreen from "./SplashScreen";
 import '../css/Home.css';
 // import earthTexture from '../assets/planetA.jpg'; 
 import earthTexture from '../assets/earth.jpg'; 
-import moonTexture from '../assets/planetA.jpg';
-import satelliteTexture from '../assets/planetB.jpg';
-import planetTexture from '../assets/planetC.jpg';
+import satelliteTexture from '../assets/satellite.jpg';
 
 function Home() {
   const systemConfig = [
     { 
-      imageUrl: moonTexture,
+      imageUrl: satelliteTexture,
       radius: 6,      // Closest orbit
       speed: 0.01, 
       direction: 1,   // Counter-clockwise
-      size: 0.7 
+      size: 0.3 
     },
     { 
       imageUrl: satelliteTexture,
-      radius: 10,     // Middle orbit
+      radius: 7,     // Middle orbit
       speed: 0.005, 
       direction: -1,  // Clockwise (retrograde motion)
-      size: 1.2 
+      size: 0.5
     },
     { 
-      imageUrl: planetTexture,
-      radius: 14,     // Farthest orbit
+      imageUrl: satelliteTexture,
+      radius: 10,     // Farthest orbit
       speed: 0.002, 
       direction: 1, 
-      size: 1.0 
+      size: 0.4
     },
   ];
 
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
 
   return (
     <div className="sphere-container">

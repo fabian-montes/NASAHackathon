@@ -22,7 +22,7 @@ const handleSphereClick = (event, id) => {
  * @param {number} [props.spinSpeed=0.01] - Speed of rotation around the Y-axis.
  * @param {number} [props.size=3] - Radius of the sphere.
  */
-function SphereWithTexture({ imageUrl, spinSpeed = 0.01, size = 3, onSelect }) {
+function SphereWithTexture({ imageUrl, spinSpeed = 0.01, size = 3 }) {
   // Use a ref to access the 3D mesh object
   const meshRef = useRef();
 
@@ -168,7 +168,7 @@ export default function SpinningSphere({
           imageUrl={imageUrl} 
           spinSpeed={spinSpeed} 
           size={size} 
-          onSelect={handleSphereSelection}
+          // onSelect={handleSphereSelection}
         />
         
         {/* The Orbiting Sphere (The 'moon') */}
