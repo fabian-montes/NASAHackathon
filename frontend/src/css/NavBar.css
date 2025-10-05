@@ -66,3 +66,28 @@
   /* The underline effect: change the transparent border to a solid color */
   border-bottom: 3px solid #00bcd4; 
 }
+
+.navbar .has-submenu { position: relative; }
+.navbar .submenu-toggle { background: none; border: 0; color: inherit; cursor: pointer; }
+.navbar .submenu {
+  position: absolute;
+  left: 0; top: 100%;
+  display: none;
+  list-style: none;
+  margin: 6px 0 0; padding: 8px 10px;
+
+  background-color: #000 !important; /* negro sólido */
+  border: 1px solid #000 !important; /* borde negro */
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+  box-shadow: none;       /* opcional, quita sombras */
+  border-radius: 8px;
+  z-index: 1000;          /* asegura que quede por encima */
+}
+
+
+.navbar .has-submenu:hover .submenu { display: block; }
+.navbar .submenu li { margin: 4px 0; }
+.navbar .submenu a { color: #fff; text-decoration: none; }
+.navbar .submenu a:hover { text-decoration: underline; }
