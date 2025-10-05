@@ -2,7 +2,29 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+import sunTexture from '../assets/sun.jpg';
+import mercuryTexture from '../assets/mercury.jpg';
+import venusTexture from '../assets/venus.jpg';
+import earthTexture from '../assets/earth.jpg';
+import marsTexture from '../assets/mars.jpg';
+import jupiterTexture from '../assets/jupiter.jpg';
+import saturnTexture from '../assets/saturn.jpg';
+import uranusTexture from '../assets/uranus.jpg';
+import neptuneTexture from '../assets/neptune.jpg';
+
 // --- Constants and Data (Unchanged) ---
+const TEXTURES = {
+    sun: sunTexture,
+    mercury: mercuryTexture,
+    venus: venusTexture,
+    earth: earthTexture,
+    mars: marsTexture,
+    jupiter: jupiterTexture,
+    saturn: saturnTexture,
+    uranus: uranusTexture,
+    neptune: neptuneTexture,
+};
+
 const SOLAR_SYSTEM_DATA = [
     { name: 'sun', radius: 40, distance: 0, speed: 0, color: 0xffa500 },
     { name: "mercury", radius: 4, distance: 60, speed: 4.15, color: 0x8c7853 },
@@ -42,8 +64,7 @@ function createCelestialBody(bodyData, textureLoader) {
         mesh.castShadow = true;
         mesh.receiveShadow = true;
     }
-    textureLoader.load(
-        `/${name}.jpg`,
+    textureLoader.load( TEXTURES[name],
         (texture) => {
             material.map = texture;
             material.color.set(0xffffff);
