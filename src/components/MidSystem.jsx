@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 const MidSystem = () => {
@@ -27,59 +27,94 @@ const MidSystem = () => {
         // Renderer
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         containerRef.current.appendChild(renderer.domElement);
         console.log('✅ Renderer created and mounted');
 
         // Texture loader
         const textureLoader = new THREE.TextureLoader();
 
+        const SEGMENTS = 32;
 
-        const SEGMENTS = 32
+        const planetsData = retrievePlanetsData();
 
-        const planetsData = retrievePlanetsData()
+        // Create sun and lights first
+        const sunTexture = textureLoader.load('/sun.jpg');
+        const sunMaterial = new THREE.MeshBasicMaterial({ map: sunTexture });
+        const sun = new THREE.Mesh(new THREE.SphereGeometry(4, 32, 32), sunMaterial);
+        scene.add(sun);
+        
+        // Configure light for shadows
+        const sunLight = new THREE.PointLight(0xffffff, 500, 0);
+        sunLight.position.set(0, 0, 0);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 500;
+        scene.add(sunLight);
+        
+        // Add ambient light so planets aren't completely black on the dark side
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+        scene.add(ambientLight);
 
-        const PLANETS = planetsData.map((p, i) => {
-            const geometry = new THREE.SphereGeometry(p.radius / 12, SEGMENTS, SEGMENTS)
-            const material = new THREE.MeshBasicMaterial({ color: p.color })
-            const ball = new THREE.Mesh(geometry, material)
-            // all the planets will be align at the very start
-            ball.position.set(p.distance / 10, 0, 0)
-            scene.add(ball)
-            console.log(`✅ "${p.name}" added at center (color fallback)`)
-            console.log(`📦 Loading texture: /${p.name}.jpg ...`)
+        // Create planets array with sun first
+        const PLANETS = [sun];
+
+        // Create planets (skip index 0 which is sun data)
+        for (let i = 1; i < planetsData.length; i++) {
+            const p = planetsData[i];
+            
+            // Create material with bright white to see them immediately
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0xaaaaaa, // Light gray - visible but won't heavily tint texture
+                metalness: 0.1,
+                roughness: 0.8
+            });
+            
+            const geometry = new THREE.SphereGeometry(p.radius / 12, SEGMENTS, SEGMENTS);
+            const mesh = new THREE.Mesh(geometry, material);
+
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            scene.add(mesh);
+
+            // Set initial position
+            mesh.position.set(p.distance / 10, 0, 0);
+
+            PLANETS.push(mesh);
+
+            // Load texture asynchronously
+            console.log(`📦 Loading texture: /${p.name}.jpg ...`);
             textureLoader.load(
                 `/${p.name}.jpg`,
                 (texture) => {
-                    console.log(`✅ SUCCESS ${p.name}.jpg loaded!`)
-                    // setting color to white to see the texture with no filters
-                    ball.material.color.set(0xffffff)
-                    material.map = texture
-                    material.needsUpdate = true
+                    console.log(`✅ SUCCESS ${p.name}.jpg loaded for ${p.name}!`);
+                    mesh.material.map = texture;
+                    mesh.material.color.set(0xffffff); // Set to white when texture loads
+                    mesh.material.needsUpdate = true;
+                    console.log(`✅ Texture applied to ${p.name}, map exists:`, mesh.material.map !== null);
                 },
-                (progress) => {
-                    console.log(`⏳ Loading  ${p.name}.jpg ...`, progress)
-                },
+                undefined,
                 (error) => {
-                    console.error(`❌ FAILED to load  ${p.name}.jpg`, error)
+                    console.error(`❌ FAILED to load ${p.name}.jpg`, error);
+                    console.log(`Using color fallback for ${p.name}`);
+                    mesh.material.color.set(p.color); // Only use color if texture fails
                 }
-            )
-            if(i === 0){
-                // adding sunlight
-                scene.add(new THREE.PointLight(0xffffff, 50000, 0))
-            }
-            return ball
-        })
+            );
+        }
 
         // Animation
-        let angle = 0
-        let frameCount = 0
+        let angle = 0;
+        let frameCount = 0;
 
         const animate = () => {
             requestAnimationFrame(animate);
 
             // Rotate sun
             PLANETS[0].rotation.y += 0.01;
-
 
             PLANETS.forEach((p, i) => {
                 if (i === 0) {
@@ -90,7 +125,7 @@ const MidSystem = () => {
                     p.position.x = Math.cos((angle + planetsData[i].deviation) * planetsData[i].speed * 5) * planetsData[i].distance / 10;
                     p.position.y = Math.sin((angle + planetsData[i].deviation) * planetsData[i].speed * 5) * planetsData[i].distance / 10;
                 }
-            })
+            });
 
             angle += 0.02;
 
@@ -100,9 +135,6 @@ const MidSystem = () => {
             frameCount++;
             if (frameCount % 60 === 0) {
                 console.log(`🎬 Frame ${frameCount}: angle=${angle.toFixed(2)}`);
-            }
-            if (frameCount % 300 === 0) {
-                console.log(PLANETS.map(p => p.position))
             }
         };
 
@@ -125,10 +157,6 @@ const MidSystem = () => {
                 containerRef.current.removeChild(renderer.domElement);
             }
             renderer.dispose();
-            // geometry1.dispose();
-            // geometry2.dispose();
-            // material1.dispose();
-            // material2.dispose();
         };
     }, []);
 
@@ -149,7 +177,7 @@ const MidSystem = () => {
 };
 
 function getRandomDeviation() {
-    return Math.random() * 2 * Math.PI
+    return Math.random() * 2 * Math.PI;
 }
 
 function retrievePlanetsData() {
@@ -163,7 +191,7 @@ function retrievePlanetsData() {
         { name: "saturn", radius: 17, distance: 270, speed: 1 / 122, color: 0xfad5a5, deviation: getRandomDeviation() },
         { name: "uranus", radius: 12, distance: 330, speed: 1 / 348, color: 0x4fd0e0, deviation: getRandomDeviation() },
         { name: "neptune", radius: 12, distance: 380, speed: 1 / 684, color: 0x4166f5, deviation: getRandomDeviation() },
-    ]
+    ];
 }
 
-export default MidSystem
+export default MidSystem;
