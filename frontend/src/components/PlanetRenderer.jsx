@@ -86,7 +86,6 @@ const PlanetRenderer = ({ planet }) => {
         const currentMount = mountRef.current;
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);
         const camera = new THREE.PerspectiveCamera(
             75,
             currentMount.clientWidth / currentMount.clientHeight,
