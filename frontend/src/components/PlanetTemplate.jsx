@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-//import '../css/starfield.css'; 
+import '../css/estrellas.css'; 
 
 /* Catálogo base con Júpiter (default) y Marte */
 export const PLANETS = {
