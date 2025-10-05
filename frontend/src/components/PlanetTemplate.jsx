@@ -6,69 +6,69 @@ import "../css/planeta.css";
 // Catálogo base
 export const PLANETS = {
   jupiter: {
-    planetName: "Júpiter",
+    planetName: "Jupiter",
     description:
-      "Júpiter es el planeta más grande de nuestro sistema solar, conocido como un gigante gaseoso compuesto principalmente de hidrógeno y helio, y se caracteriza por su Gran Mancha Roja y sus bandas de nubes arremolinadas.",
+      "Jupiter is the largest planet and a gas giant composed primarily of hydrogen and helium, with a ~69,911 km equatorial radius and a mass of 318 M⊕ at 5.20 AU. It displays prominent cloud bands, long-lived cyclones such as the Great Red Spot, a ~9.9 h day, and an 11.86-year orbital period. Its magnetosphere is the most extensive in the solar system, and it hosts a broad satellite system—including the Galilean moons Io, Europa, Ganymede, and Callisto—and faint rings.",
     planetImageUrl: undefined,
   },
   mars: {
-    planetName: "Marte",
+    planetName: "Mars",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Mars is a cold, arid terrestrial world at 1.52 AU with a mean radius of ~3,390 km and a mass of 0.107 M⊕. It hosts seasonal polar caps, a thin CO₂-dominated atmosphere (~6 mbar at the surface), temperatures from ~–125 °C to ~20 °C, and geology that includes Olympus Mons and extensive valleys. The solar day is ~24.6 h, the year 687 days, and its two small, irregular moons are Phobos and Deimos.",
     planetImageUrl: undefined,
   },
   saturn: {
-    planetName: "Saturno",
+    planetName: "Saturn",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Saturn, a low-density gas giant (~0.69 g/cm³), orbits at 9.58 AU and possesses the most developed ring system, composed mainly of ice and dust distributed among complex families (A, B, C). With an equatorial radius of ~58,232 km and a mass of 95 M⊕, its day is ~10.7 h and its year 29.45 years. Notable moons include Titan, with a dense nitrogen atmosphere and hydrocarbon lakes, and Enceladus, which emits plumes consistent with a subsurface ocean.",
     planetImageUrl: undefined,
   },
   mercury: {
-    planetName: "Mercurio",
+    planetName: "Mercury",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Mercury is the innermost rocky planet, exhibiting a heavily cratered surface, an extremely tenuous exosphere dominated by sodium and potassium, and a 3:2 spin–orbit resonance. With a mean radius of ~2,439 km and a mass of 0.055 Earth masses, it orbits at 0.39 AU and completes a year in 87.97 days. Its sidereal day lasts 58.65 days; surface temperatures range from ~–170 °C to +430 °C, and its intrinsic magnetic field is weak (≈1% of Earth’s). No natural satellites are known.",
     planetImageUrl: undefined,
   },
   venus: {
     planetName: "Venus",
-    description: "venusvenusvens.",
+    description: "Venus, similar to Earth in size (mean radius ~6,052 km; 0.815 Earth masses) and located at 0.72 AU, rotates very slowly in a retrograde sense (sidereal day ~–243 days) and is enveloped by a dense CO₂ atmosphere with sulfuric acid clouds, producing an extreme greenhouse effect. Surface pressure is ~92 bar, mean temperature ~465 °C, and high-altitude winds exhibit superrotation. No natural satellites are present.",
     planetImageUrl: undefined,
   },
   earth: {
-    planetName: "Tierra",
+    planetName: "Earth",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Earth, at 1 AU from the Sun, is the only known planet with life and maintains a dynamic balance among active geology, liquid oceans (~71% surface coverage), a protective atmosphere, and a robust geomagnetic field. With a mean radius of ~6,371 km and a mass of 1 M⊕, its year lasts 365.25 days and its sidereal day 23 h 56 min. The global mean surface temperature is ~15 °C, and the atmosphere is ~78% N₂, ~21% O₂, with trace gases. It has one natural satellite, the Moon.",
     planetImageUrl: undefined,
   },
   uranus: {
-    planetName: "Urano",
+    planetName: "Uranus",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Uranus is an ice giant at 19.2 AU characterized by an extreme axial tilt (~98°) that yields prolonged seasons and a retrograde rotation with a ~–17.2 h day. With a mean radius of ~25,362 km and a mass of 14.5 M⊕, its atmosphere contains hydrogen, helium, and methane that imparts a turquoise hue; typical cloud-top temperatures are ~–224 °C. It features faint rings, a magnetosphere offset and tilted relative to the spin axis, and 27 known moons.",
     planetImageUrl: undefined,
   },
   neptune: {
-    planetName: "Neptuno",
+    planetName: "Neptune",
     description:
-      "Marte es un planeta rocoso de color rojizo, con volcanes colosales y una atmósfera delgada.",
+      "Neptune, the most distant ice giant at 30.1 AU, has a mean radius of ~24,622 km and a mass of 17.1 M⊕. Its hydrogen-helium-methane atmosphere exhibits very high-speed winds (measured above 600 m/s) and variable storm systems, including dark spots. The day is ~16.1 h and the year 164.8 years. It has faint rings and over a dozen moons, among them Triton, which orbits retrograde and shows cryovolcanic activity.",
     planetImageUrl: undefined,
   },
 };
 
 // NUEVO: mapa de alias para detectar menciones a otros planetas
 const PLANET_ALIASES = {
-  Júpiter: ["jupiter", "júpiter", "io", "europa", "ganímedes", "calisto"],
-  Marte: ["marte", "mars", "olympus mons", "phobos", "deimos"],
+  Jupiter: ["jupiter", "io", "europa", "ganymede", "callisto"],
+  Mars: ["mars", "olympus mons", "phobos", "deimos"],
 };
 
 function buildSystemPrompt(planetName) {
   // NUEVO: instrucción que “encierra” la respuesta al planeta actual
   return `
-Eres un asistente que SOLO responde sobre el planeta "${planetName}".
-Reglas:
-- Responde exclusivamente datos, hechos y contexto relacionados con "${planetName}".
-- Si el usuario pregunta sobre otro tema o planeta distinto, responde brevemente:
-  "Solo puedo hablar sobre ${planetName}."
-- Responde en español, con precisión y concisión.
+You are an assistant that ONLY answers about the planet "${planetName}".
+Rules:
+- Respond exclusively with facts and context related to "${planetName}".
+- If the user asks about a different topic or planet, reply briefly:
+  "I can only talk about ${planetName}."
+- Answer in English with precision and concision.
 `.trim();
 }
 
@@ -202,7 +202,7 @@ export default function PlanetTemplate({
   };
 
   return (
-    <div className="planet-root">
+    <div className="planet-root" key={effectivePlanetKey}>
       <div
         className="canvas"
         style={{
@@ -220,10 +220,10 @@ export default function PlanetTemplate({
         />
 
         <aside className="desc">
-        <p>{final.description}</p>
-        <button onClick={handlePlay} className="play-btn" aria-label="Reproducir descripción">
+          <p>{final.description}</p>
+          <button onClick={handlePlay} className="play-btn" aria-label="Reproducir descripción">
             🔊 Escuchar descripción
-        </button>
+          </button>
         </aside>
 
         <div className="qa">
