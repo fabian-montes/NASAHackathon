@@ -4,6 +4,7 @@ import SpinningSphere from './SpinningSphere';
 import '../css/Home.css';
 // import earthTexture from '../assets/planetA.jpg'; 
 import earthTexture from '../assets/fabian.png'; 
+import moonTexture from '../assets/planetA.jpg';
 
 function Home() {
   return (
@@ -11,8 +12,9 @@ function Home() {
       {/* Assuming your image is at /public/images/my-texture.jpg */}
       <SpinningSphere 
         imageUrl={earthTexture}
+        orbitImageUrl={moonTexture}
         spinSpeed={0.005} // Slower spin
-        size={2} 
+        size={3} 
         canvasClassName="full-size-canvas"
       />
     </div>
