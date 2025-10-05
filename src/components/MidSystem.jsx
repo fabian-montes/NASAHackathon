@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const MidSystem = () => {
-    const containerRef = useRef(null);
-    const [textureStatus, setTextureStatus] = useState({
-        ball1: 'loading',
-        ball2: 'loading'
-    });
+    const containerRef = useRef(null)
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -37,77 +33,66 @@ const MidSystem = () => {
         // Texture loader
         const textureLoader = new THREE.TextureLoader();
 
-        
 
-        // Ball 1 - Red with texture (center)
-        const geometry1 = new THREE.SphereGeometry(5, 32, 32);
-        const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        const ball1 = new THREE.Mesh(geometry1, material1);
-        ball1.position.set(0, 0, 0);
-        scene.add(ball1);
-        console.log('✅ Red ball added at center (color fallback)');
+        const SEGMENTS = 32
 
-        // Load texture for ball 1 (Sun)
-        console.log('📦 Loading texture: /sun.jpg');
-        textureLoader.load(
-            '/sun.jpg',
-            (texture) => {
-                console.log('✅ SUCCESS: sun.jpg loaded!');
-                material1.map = texture;
-                material1.needsUpdate = true;
-                setTextureStatus(prev => ({ ...prev, ball1: 'loaded' }));
-            },
-            (progress) => {
-                console.log('⏳ Loading sun.jpg...', progress);
-            },
-            (error) => {
-                console.error('❌ FAILED to load sun.jpg:', error);
-                setTextureStatus(prev => ({ ...prev, ball1: 'failed' }));
+        const planetsData = retrievePlanetsData()
+
+        const PLANETS = planetsData.map((p, i) => {
+            const geometry = new THREE.SphereGeometry(p.radius / 12, SEGMENTS, SEGMENTS)
+            const material = new THREE.MeshBasicMaterial({ color: p.color })
+            const ball = new THREE.Mesh(geometry, material)
+            // all the planets will be align at the very start
+            ball.position.set(p.distance / 10, 0, 0)
+            scene.add(ball)
+            console.log(`✅ "${p.name}" added at center (color fallback)`)
+            console.log(`📦 Loading texture: /${p.name}.jpg ...`)
+            textureLoader.load(
+                `/${p.name}.jpg`,
+                (texture) => {
+                    console.log(`✅ SUCCESS ${p.name}.jpg loaded!`)
+                    // setting color to white to see the texture with no filters
+                    ball.material.color.set(0xffffff)
+                    material.map = texture
+                    material.needsUpdate = true
+                },
+                (progress) => {
+                    console.log(`⏳ Loading  ${p.name}.jpg ...`, progress)
+                },
+                (error) => {
+                    console.error(`❌ FAILED to load  ${p.name}.jpg`, error)
+                }
+            )
+            if(i === 0){
+                // adding sunlight
+                scene.add(new THREE.PointLight(0xffffff, 50000, 0))
             }
-        );
-
-        // Ball 2 - Blue with texture (orbiting)
-        const geometry2 = new THREE.SphereGeometry(3, 32, 32);
-        const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-        const ball2 = new THREE.Mesh(geometry2, material2);
-        scene.add(ball2);
-        console.log('✅ Blue ball added (color fallback)');
-
-        // Load texture for ball 2 (Earth)
-        console.log('📦 Loading texture: /earth.jpg');
-        textureLoader.load(
-            '/earth.jpg',
-            (texture) => {
-                console.log('✅ SUCCESS: earth.jpg loaded!');
-                material2.map = texture;
-                material2.needsUpdate = true;
-                setTextureStatus(prev => ({ ...prev, ball2: 'loaded' }));
-            },
-            (progress) => {
-                console.log('⏳ Loading earth.jpg...', progress);
-            },
-            (error) => {
-                console.error('❌ FAILED to load earth.jpg:', error);
-                setTextureStatus(prev => ({ ...prev, ball2: 'failed' }));
-            }
-        );
+            return ball
+        })
 
         // Animation
-        let angle = 0;
-        const orbitRadius = 20;
-        let frameCount = 0;
+        let angle = 0
+        let frameCount = 0
 
         const animate = () => {
             requestAnimationFrame(animate);
 
-            // Orbit ball2 around ball1
-            angle += 0.02;
-            ball2.position.x = Math.cos(angle) * orbitRadius;
-            ball2.position.y = Math.sin(angle) * orbitRadius;
+            // Rotate sun
+            PLANETS[0].rotation.y += 0.01;
 
-            // Rotate balls
-            ball1.rotation.y += 0.01;
-            ball2.rotation.y += 0.02;
+
+            PLANETS.forEach((p, i) => {
+                if (i === 0) {
+                    p.rotation.y += 0.01;
+                } else {
+                    // Rotate and translate 
+                    p.rotation.y += 0.02;
+                    p.position.x = Math.cos((angle + planetsData[i].deviation) * planetsData[i].speed * 5) * planetsData[i].distance / 10;
+                    p.position.y = Math.sin((angle + planetsData[i].deviation) * planetsData[i].speed * 5) * planetsData[i].distance / 10;
+                }
+            })
+
+            angle += 0.02;
 
             renderer.render(scene, camera);
 
@@ -115,6 +100,9 @@ const MidSystem = () => {
             frameCount++;
             if (frameCount % 60 === 0) {
                 console.log(`🎬 Frame ${frameCount}: angle=${angle.toFixed(2)}`);
+            }
+            if (frameCount % 300 === 0) {
+                console.log(PLANETS.map(p => p.position))
             }
         };
 
@@ -137,10 +125,10 @@ const MidSystem = () => {
                 containerRef.current.removeChild(renderer.domElement);
             }
             renderer.dispose();
-            geometry1.dispose();
-            geometry2.dispose();
-            material1.dispose();
-            material2.dispose();
+            // geometry1.dispose();
+            // geometry2.dispose();
+            // material1.dispose();
+            // material2.dispose();
         };
     }, []);
 
@@ -156,44 +144,26 @@ const MidSystem = () => {
                     display: 'block'
                 }}
             />
-            <div style={{
-                position: 'fixed',
-                top: '20px',
-                left: '20px',
-                color: 'white',
-                background: 'rgba(0,0,0,0.9)',
-                padding: '15px',
-                borderRadius: '8px',
-                fontFamily: 'monospace',
-                fontSize: '13px',
-                zIndex: 1000,
-                border: '2px solid #333'
-            }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '10px', fontSize: '14px' }}>
-                    🔍 TEXTURE TEST
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                    <span style={{ display: 'inline-block', width: '100px' }}>Red ball:</span>
-                    <span style={{
-                        color: textureStatus.ball1 === 'loaded' ? '#4ade80' : textureStatus.ball1 === 'failed' ? '#ff6b6b' : '#fbbf24'
-                    }}>
-                        {textureStatus.ball1 === 'loaded' ? '✅ /sun.jpg' : textureStatus.ball1 === 'failed' ? '❌ Failed' : '⏳ Loading...'}
-                    </span>
-                </div>
-                <div>
-                    <span style={{ display: 'inline-block', width: '100px' }}>Blue ball:</span>
-                    <span style={{
-                        color: textureStatus.ball2 === 'loaded' ? '#4ade80' : textureStatus.ball2 === 'failed' ? '#ff6b6b' : '#fbbf24'
-                    }}>
-                        {textureStatus.ball2 === 'loaded' ? '✅ /earth.jpg' : textureStatus.ball2 === 'failed' ? '❌ Failed' : '⏳ Loading...'}
-                    </span>
-                </div>
-                <div style={{ marginTop: '10px', fontSize: '11px', opacity: 0.7, borderTop: '1px solid #333', paddingTop: '8px' }}>
-                    Check console for detailed logs
-                </div>
-            </div>
         </div>
     );
 };
+
+function getRandomDeviation() {
+    return Math.random() * 2 * Math.PI
+}
+
+function retrievePlanetsData() {
+    return [
+        { name: 'sun', radius: 40, distance: 0, speed: 1, color: 0xff0000 },
+        { name: "mercury", radius: 4, distance: 60, speed: 1 / 1, color: 0x8c7853, deviation: getRandomDeviation() },
+        { name: "venus", radius: 7, distance: 90, speed: 1 / 2.55, color: 0xffc649, deviation: getRandomDeviation() },
+        { name: "earth", radius: 8, distance: 120, speed: 1 / 4.15, color: 0x2233ff, deviation: getRandomDeviation() },
+        { name: "mars", radius: 6, distance: 150, speed: 1 / 7.81, color: 0xcd5c5c, deviation: getRandomDeviation() },
+        { name: "jupiter", radius: 20, distance: 210, speed: 1 / 49, color: 0xc88b3a, deviation: getRandomDeviation() },
+        { name: "saturn", radius: 17, distance: 270, speed: 1 / 122, color: 0xfad5a5, deviation: getRandomDeviation() },
+        { name: "uranus", radius: 12, distance: 330, speed: 1 / 348, color: 0x4fd0e0, deviation: getRandomDeviation() },
+        { name: "neptune", radius: 12, distance: 380, speed: 1 / 684, color: 0x4166f5, deviation: getRandomDeviation() },
+    ]
+}
 
 export default MidSystem
