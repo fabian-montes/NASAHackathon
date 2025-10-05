@@ -116,6 +116,18 @@ const PlanetRenderer = ({ planet }) => {
         controls.dampingFactor = 0.05;
         controls.minDistance = 20;
         controls.maxDistance = 200;
+        
+        // Enhanced cursor controls
+        controls.enableRotate = true;  // Enable rotation with left mouse drag
+        controls.enablePan = true;      // Enable panning with right mouse drag
+        controls.enableZoom = true;     // Enable zooming with scroll wheel
+        controls.rotateSpeed = 1.0;     // Adjust rotation sensitivity
+        controls.panSpeed = 0.8;        // Adjust pan sensitivity
+        controls.zoomSpeed = 1.2;       // Adjust zoom sensitivity
+        
+        // Make rotation smoother
+        controls.autoRotate = false;    // Set to true for auto-rotation
+        controls.autoRotateSpeed = 2.0;
 
         let animationFrameId;
         const animate = () => {
@@ -150,7 +162,7 @@ const PlanetRenderer = ({ planet }) => {
     return (
         <div 
             ref={mountRef} 
-            style={{ width: '50vw', height: '67vh', display: 'block', border: '1px solid limegreen' }} 
+            style={{ width: '50vw', height: '67vh', display: 'block', transform: 'translateX(-250px)' }} 
         />
     );
 };
