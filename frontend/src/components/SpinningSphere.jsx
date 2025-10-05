@@ -134,14 +134,15 @@ export default function SpinningSphere({
   orbitConfigs = [], // New prop for the orbiting sphere's texture
   spinSpeed, 
   size,
-  canvasClassName
+  canvasClassName,
+  setShowSplash
 }) {
 
   // 1. Define the handler function
   const handleSphereSelection = (event, id) => {
       event.stopPropagation(); // Prevents clicks from triggering on parent elements
       console.log(`⭐ Sphere Selected: ${id}`);
-      
+      setShowSplash(true);
       // You could manage the selected state here:
       // const [selectedId, setSelectedId] = useState(null);
       // setSelectedId(id);

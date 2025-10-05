@@ -1,5 +1,6 @@
-import React from 'react';
+import { React, useState } from 'react';
 import SpinningSphere from './SpinningSphere';
+import SplashScreen from "./SplashScreen";
 
 import '../css/Home.css';
 // import earthTexture from '../assets/planetA.jpg'; 
@@ -33,15 +34,19 @@ function Home() {
     },
   ];
 
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <div className="sphere-container">
-      <SpinningSphere 
+      {showSplash && <SplashScreen onClose={() => setShowSplash(false)} />}
+      {!showSplash && <SpinningSphere
         imageUrl={earthTexture}
         orbitConfigs={systemConfig}
         spinSpeed={0.005} // Slower spin
         size={3} 
         canvasClassName="full-size-canvas"
-      />
+        setShowSplash={setShowSplash}
+      /> }
     </div>
   );
 }
