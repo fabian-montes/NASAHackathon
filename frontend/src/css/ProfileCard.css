@@ -36,9 +36,10 @@
   /* filter: invert(100%); If your silhouettes are white on transparent, this will make them black */
                         /* Or remove if your silhouettes are already dark */
   position: absolute;
-  top: 50%;
+  /* top: 50%; */
+  bottom: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
 
   transition: opacity 0.4s ease-in-out, filter 0.4s ease-in-out;
 
@@ -58,7 +59,8 @@
   filter: brightness(1) hue-rotate(0deg); /* Revert to normal brightness */
   
   /* Keep the slight scale effect on the silhouette if you like it */
-  transform: translate(-50%, -50%) scale(1.05); 
+  /* transform: translate(-50%, -50%) scale(1.05);  */
+  transform: translate(-50%, 0) scale(1.05); 
 }
 
 .profile-name {
