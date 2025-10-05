@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-//import '../css/starfield.css'; 
 
-/* Catálogo base con Júpiter (default) y Marte */
+// Catálogo base
 export const PLANETS = {
   jupiter: {
     planetName: "Júpiter",
     description:
       "Júpiter es el planeta más grande de nuestro sistema solar, conocido como un gigante gaseoso compuesto principalmente de hidrógeno y helio, y se caracteriza por su Gran Mancha Roja y sus bandas de nubes arremolinadas.",
-    planetImageUrl: undefined, // añade URL si deseas mostrar imagen en el slot
+    planetImageUrl: undefined,
   },
   mars: {
     planetName: "Marte",
@@ -17,25 +16,61 @@ export const PLANETS = {
   },
 };
 
+// NUEVO: mapa de alias para detectar menciones a otros planetas
+const PLANET_ALIASES = {
+  Júpiter: ["jupiter", "júpiter", "io", "europa", "ganímedes", "calisto"],
+  Marte: ["marte", "mars", "olympus mons", "phobos", "deimos"],
+};
+
+function buildSystemPrompt(planetName) {
+  // NUEVO: instrucción que “encierra” la respuesta al planeta actual
+  return `
+Eres un asistente que SOLO responde sobre el planeta "${planetName}".
+Reglas:
+- Responde exclusivamente datos, hechos y contexto relacionados con "${planetName}".
+- Si el usuario pregunta sobre otro tema o planeta distinto, responde brevemente:
+  "Solo puedo hablar sobre ${planetName}."
+- Responde en español, con precisión y concisión.
+`.trim();
+}
+
 export default function PlanetTemplate({
-  planetKey = "jupiter",
+  planetKey = "mars",
   planetName,
   description,
   questionLabel,
   placeholder,
   sendLabel = "",
-  // NUEVO: onSubmit por defecto que llama a tu backend y alerta la respuesta
-  onSubmit = async (value) => {
+  // onSubmit por defecto que llama a tu backend
+  onSubmit = async (value, ctx) => {
     if (!value?.trim()) return;
+
+    // NUEVO: filtro local — si detecta otros planetas, evita gastar tokens
+    const { activePlanetName, otherPlanetAliases } = ctx || {};
+    const text = value.toLowerCase();
+    const mentionsOther = otherPlanetAliases?.some((alias) => text.includes(alias));
+    if (mentionsOther) {
+      alert(`Solo puedo hablar sobre ${activePlanetName}.`);
+      return;
+    }
+
+    // NUEVO: empaquetar system + pregunta para que el backend quede “anclado”
+    const system = buildSystemPrompt(activePlanetName);
+    const userPrompt = `Pregunta del usuario: ${value}`;
+
     try {
-      const res = await fetch("http://localhost:3000/chat", {   // <-- NO uses solo "/chat"
+      const res = await fetch("http://localhost:3000/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ prompt: value })
+        body: JSON.stringify({
+          // Mandamos system primero y luego la pregunta del usuario, ya en tu backend
+          // se envía como 'prompt' único; el guardado fuerte ideal es replicar el system ahí.
+          prompt: `${system}\n\n${userPrompt}`
+        })
       });
       if (!res.ok) throw new Error(await res.text());
-      const { text } = await res.json();
-      alert(text || "(sin respuesta)");
+      const { text: answer } = await res.json();
+      alert(answer || "(sin respuesta)");
     } catch (e) {
       alert("Error: " + e.message);
     }
@@ -43,7 +78,6 @@ export default function PlanetTemplate({
   planetImageUrl,
   spaceBgUrl,
 }) {
-
   const [value, setValue] = useState("");
 
   const base = PLANETS[planetKey] || PLANETS.jupiter;
@@ -55,9 +89,21 @@ export default function PlanetTemplate({
     planetImageUrl: planetImageUrl ?? base.planetImageUrl,
   };
 
+  // NUEVO: prepara lista de alias del planeta activo y de “otros”
+  const activeAliases = PLANET_ALIASES[final.planetName] || [final.planetName.toLowerCase()];
+  const otherPlanetAliases = Object.keys(PLANET_ALIASES)
+    .filter((p) => p !== final.planetName)
+    .flatMap((p) => PLANET_ALIASES[p])
+    .map((s) => s.toLowerCase());
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit?.(value);
+    // NUEVO: pasamos contexto al onSubmit por si lo necesita (no rompe compatibilidad)
+    onSubmit?.(value, {
+      activePlanetName: final.planetName,
+      activeAliases,
+      otherPlanetAliases
+    });
     setValue("");
   };
 
@@ -72,7 +118,6 @@ export default function PlanetTemplate({
       >
         <h1 className="title">{final.planetName}</h1>
 
-        {/* Slot cuadrado con posiciones exactas. */}
         <div className="planet-slot" aria-label={`Imagen de ${final.planetName}`} />
 
         <aside className="desc">
