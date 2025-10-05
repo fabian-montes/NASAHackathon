@@ -5,7 +5,7 @@ const MidSystem = () => {
     const containerRef = useRef(null)
 
     useEffect(() => {
-        if (!containerRef.current) return;
+        if (!containerRef.current) return
 
         console.log('🚀 Starting TinySystem with textures...');
 
