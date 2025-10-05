@@ -3,6 +3,17 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { useTexture, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
+// A function to be passed down as a prop to handle the selection logic
+const handleSphereClick = (event, id) => {
+    // Stop event propagation so clicking the small sphere doesn't also click the large one
+    event.stopPropagation(); 
+    
+    // The 'id' allows you to uniquely identify which sphere was clicked
+    console.log(`Sphere Selected: ${id}`);
+    
+    // In a real app, you would update a React state here:
+    // setSelectedSphere(id);
+};
 /**
  * Renders a 3D sphere with a custom texture that spins.
  *
@@ -11,7 +22,7 @@ import * as THREE from 'three';
  * @param {number} [props.spinSpeed=0.01] - Speed of rotation around the Y-axis.
  * @param {number} [props.size=3] - Radius of the sphere.
  */
-function SphereWithTexture({ imageUrl, spinSpeed = 0.01, size = 3 }) {
+function SphereWithTexture({ imageUrl, spinSpeed = 0.01, size = 3, onSelect }) {
   // Use a ref to access the 3D mesh object
   const meshRef = useRef();
 
@@ -28,7 +39,7 @@ function SphereWithTexture({ imageUrl, spinSpeed = 0.01, size = 3 }) {
 
   return (
     // <mesh> is the base 3D object
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} onClick={(e) => onSelect(e, 'Main_Sphere')}>
       {/* <sphereGeometry> defines the shape (a sphere) */}
       <sphereGeometry args={[size, 64, 64]} /> 
       {/* <meshStandardMaterial> defines the material, accepting the loaded texture */}
@@ -62,6 +73,8 @@ function OrbitingSphere({
   orbitRadius = 6,
   orbitSpeed = 0.005,
   direction = 1,
+  id,
+  onSelect
 }) {
   const meshRef = useRef();
   const colorMap = useTexture(imageUrl);
@@ -91,7 +104,7 @@ function OrbitingSphere({
   });
 
   return (
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} onClick={(e) => onSelect(e, id)}>
       <sphereGeometry args={[size, 32, 32]} /> 
       <meshStandardMaterial 
         map={colorMap} 
@@ -121,8 +134,19 @@ export default function SpinningSphere({
   orbitConfigs = [], // New prop for the orbiting sphere's texture
   spinSpeed, 
   size,
-  canvasClassName 
+  canvasClassName
 }) {
+
+  // 1. Define the handler function
+  const handleSphereSelection = (event, id) => {
+      event.stopPropagation(); // Prevents clicks from triggering on parent elements
+      console.log(`⭐ Sphere Selected: ${id}`);
+      
+      // You could manage the selected state here:
+      // const [selectedId, setSelectedId] = useState(null);
+      // setSelectedId(id);
+  };
+
   return (
     // <Canvas> is the main entry point for R3F, creating a WebGL context.
     <Canvas className={canvasClassName}>
@@ -143,6 +167,7 @@ export default function SpinningSphere({
           imageUrl={imageUrl} 
           spinSpeed={spinSpeed} 
           size={size} 
+          onSelect={handleSphereSelection}
         />
         
         {/* The Orbiting Sphere (The 'moon') */}
@@ -152,6 +177,8 @@ export default function SpinningSphere({
         {orbitConfigs.map((config, index) => (
           <OrbitingSphere 
             key={index} // Use index as a key (safe here since the array order won't change)
+            id={config.name || `Satellite_${index}`} // Use a name from config or a default ID
+            onSelect={handleSphereSelection} // Pass handler
             imageUrl={config.imageUrl}
             orbitRadius={config.radius} // Map 'radius' from config to 'orbitRadius' prop
             orbitSpeed={config.speed}   // Map 'speed' from config to 'orbitSpeed' prop
