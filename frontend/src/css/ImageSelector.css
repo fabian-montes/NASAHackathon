@@ -3,6 +3,7 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    height: 300px;
 }
 
 .splash-image {
@@ -10,4 +11,5 @@
   width: 98%;   /* takes full container width */
   height: auto;  /* keeps aspect ratio */
   display: block;
+  margin-bottom: 130px;
 }

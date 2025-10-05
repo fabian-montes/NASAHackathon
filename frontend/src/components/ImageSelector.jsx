@@ -7,6 +7,7 @@ export default function ImageSelector({ src }) {
   const [selection, setSelection] = useState({ x: 50, y: 50, w: 100, h: 80 });
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -35,6 +36,8 @@ export default function ImageSelector({ src }) {
     setDragging(false);
   };
 
+  const toggleZoom = () => setIsZoomed(!isZoomed);
+
   return (
     <div
       ref={containerRef}
@@ -45,7 +48,20 @@ export default function ImageSelector({ src }) {
       onMouseLeave={handleMouseUp}
     >
 
-      <img src={src} alt="Selectable" className="splash-image max-w-full h-auto block" />
+      {/* <img src={src} alt="Selectable" className="splash-image max-w-full h-auto block" /> */}
+      {/* Image with zoom */}
+      <img
+        src={src}
+        alt="Selectable"
+        className="splash-image max-w-full h-auto block"
+        style={{
+          transform: isZoomed ? "scale(2)" : "scale(1)",
+          transition: "transform 0.4s ease",
+          transformOrigin: "center center",
+        }}
+        onClick={toggleZoom}
+      />
+
       {/* Selection Rectangle */}
       <div
         onMouseDown={handleMouseDown}
@@ -60,6 +76,28 @@ export default function ImageSelector({ src }) {
           background: "rgba(255,0,0,0.1)",
         }}
       ></div>
+
+      {/* Collapse zoom button */}
+      {isZoomed && (
+        <button
+          onClick={toggleZoom}
+          style={{
+            position: "absolute",
+            top: "12px",
+            right: "12px",
+            padding: "6px 10px",
+            border: "none",
+            borderRadius: "6px",
+            background: "rgba(0,0,0,0.7)",
+            color: "white",
+            cursor: "pointer",
+            zIndex: 20,
+          }}
+        >
+          Collapse
+        </button>
+      )}
+
     </div>
   );
 }
