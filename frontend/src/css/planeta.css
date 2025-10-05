@@ -80,7 +80,7 @@
 /* Input y botón: recuadros blancos con transparencia */
 .planet-root .inputRow {
   display: grid;
-  grid-template-columns: 1fr 56px;
+  grid-template-columns: 1fr 56px 56px;
   gap: 10px;
   width: 58%;           /* < 60% como pediste */
   justify-self: start;  /* lo “pega” al lado izquierdo dentro del grid */
@@ -121,7 +121,7 @@
   position: absolute;
   right: 5.56vw;
   bottom: 9.63vh;
-  width: min(28vw, 380px);
+  width: min(18.5vw, 380px);
   max-height: 22vh;
   overflow-y: auto;
   background: var(--panel-bg);
@@ -165,3 +165,15 @@
 }
 
 
+.planet-root .mic {
+  border: 1px solid var(--panel-bd);
+  border-radius: 10px;
+  background: var(--panel-bg);
+  color: var(--txt);
+  display: grid;
+  place-items: center;
+  transition: transform .08s ease, filter .12s ease;
+}
+
+.planet-root .mic:hover  { filter: brightness(1.05); }
+.planet-root .mic:active { transform: translateY(1px); }

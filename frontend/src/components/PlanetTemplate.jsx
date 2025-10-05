@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom"; // ← para leer planetKey desde el NavBar
 import "../css/estrellas.css";
 import "../css/planeta.css";
@@ -31,7 +31,8 @@ export const PLANETS = {
   },
   venus: {
     planetName: "Venus",
-    description: "Venus, similar to Earth in size (mean radius ~6,052 km; 0.815 Earth masses) and located at 0.72 AU, rotates very slowly in a retrograde sense (sidereal day ~–243 days) and is enveloped by a dense CO₂ atmosphere with sulfuric acid clouds, producing an extreme greenhouse effect. Surface pressure is ~92 bar, mean temperature ~465 °C, and high-altitude winds exhibit superrotation. No natural satellites are present.",
+    description:
+      "Venus, similar to Earth in size (mean radius ~6,052 km; 0.815 Earth masses) and located at 0.72 AU, rotates very slowly in a retrograde sense (sidereal day ~–243 days) and is enveloped by a dense CO₂ atmosphere with sulfuric acid clouds, producing an extreme greenhouse effect. Surface pressure is ~92 bar, mean temperature ~465 °C, and high-altitude winds exhibit superrotation. No natural satellites are present.",
     planetImageUrl: undefined,
   },
   earth: {
@@ -73,7 +74,7 @@ Rules:
 }
 
 export default function PlanetTemplate({
-  planetKey = "venus",
+  planetKey = "mars",
   planetName,
   description,
   questionLabel,
@@ -145,6 +146,10 @@ export default function PlanetTemplate({
 }) {
   const [value, setValue] = useState("");
 
+  // 🔊 Estado y referencia de audio (DENTRO del componente)
+  const audioRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(false);
+
   // === lee planetKey mandado desde el NavBar.jsx vía state ===
   const { state } = useLocation();
   const fromNav = state?.planetKey; // 'jupiter' | 'mars' | ...
@@ -183,7 +188,8 @@ export default function PlanetTemplate({
     setValue("");
   };
 
-  const handlePlay = async () => {
+  // 🔊 Inicializar y reproducir audio automáticamente
+  const initAndPlay = async () => {
     try {
       const res = await fetch("http://localhost:3000/tts", {
         method: "POST",
@@ -194,12 +200,34 @@ export default function PlanetTemplate({
 
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
+
+      // Limpia audio previo
+      if (audioRef.current) {
+        audioRef.current.pause();
+        URL.revokeObjectURL(audioRef.current.src);
+      }
+
       const audio = new Audio(url);
-      audio.play();
+      audio.muted = isMuted;
+      audioRef.current = audio;
+      audio.play().catch(() => {
+        // Algunos navegadores bloquean autoplay; lo ignoramos.
+      });
     } catch (e) {
       alert("Error al reproducir: " + e.message);
     }
   };
+
+  useEffect(() => {
+    initAndPlay();
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        URL.revokeObjectURL(audioRef.current.src);
+        audioRef.current = null;
+      }
+    };
+  }, [final.planetName, final.description]); // ⬅️ no incluir isMuted para no regenerar TTS
 
   return (
     <div className="planet-root" key={effectivePlanetKey}>
@@ -221,8 +249,16 @@ export default function PlanetTemplate({
 
         <aside className="desc">
           <p>{final.description}</p>
-          <button onClick={handlePlay} className="play-btn" aria-label="Reproducir descripción">
-            🔊 Escuchar descripción
+          <button
+            onClick={() => {
+              const next = !isMuted;
+              setIsMuted(next);
+              if (audioRef.current) audioRef.current.muted = next;
+            }}
+            className="play-btn"
+            aria-label={isMuted ? "Activar sonido" : "Silenciar audio"}
+          >
+            {isMuted ? "🔈 Activar sonido" : "🔇 Silenciar"}
           </button>
         </aside>
 
@@ -235,6 +271,22 @@ export default function PlanetTemplate({
               placeholder={final.placeholder}
               aria-label={final.placeholder}
             />
+
+            {/* 🔽 AÑADE ESTE BOTÓN NUEVO AQUÍ */}
+            <button
+              className="mic"
+              aria-label="micrófono"
+              title="Micrófono"
+              type="button"
+            >
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden>
+                <path
+                  d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 8a7.98 7.98 0 0 1-6-2.7V20h12v-3.7A7.98 7.98 0 0 1 12 19z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+
             <button className="send" aria-label="enviar" title="Enviar">
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden>
                 <path
@@ -244,7 +296,6 @@ export default function PlanetTemplate({
               </svg>
               {sendLabel}
             </button>
-
           </form>
         </div>
       </div>
