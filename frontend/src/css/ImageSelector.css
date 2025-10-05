@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.splash-image {
+  position: relative;
+  width: 98%;   /* takes full container width */
+  height: auto;  /* keeps aspect ratio */
+  display: block;
+}

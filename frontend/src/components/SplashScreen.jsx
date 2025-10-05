@@ -2,6 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import '../css/SplashScreen.css';
+import ImageSelector from "./ImageSelector";
+
+import hubbleImg from "../assets/hubble5kb.jpg";
 
 export default function SplashScreen({ onClose }) {
   const [isVisible, setIsVisible] = useState(true);
@@ -20,6 +23,7 @@ export default function SplashScreen({ onClose }) {
         <button className="splash-close" onClick={handleClose}>
           X
         </button>
+        <ImageSelector src={hubbleImg}/>
       </div>
     </div>
   );
