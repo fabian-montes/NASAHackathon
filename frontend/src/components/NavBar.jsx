@@ -11,15 +11,14 @@ function NavBar() {
       </div>
       <ul className='nav-links'>
         <li>
-          {/* Navigates to the path defined by 'to' */}
-          <Link to="/">Home</Link>
+          <Link to="/SolarSystem">Solar System</Link>
         </li>
         <li>
           <Link to="/About">About Us</Link>
         </li>
-        <li>
-          <Link to="/SolarSystem">Solar System</Link>
-        </li>
+      
+        
+        
 
         <li className="has-submenu">
           {/* Link principal a la vista general de Planetas */}
@@ -38,6 +37,11 @@ function NavBar() {
             <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'uranus' }}>Uranus</Link></li>
             <li role="none"><Link role="menuitem" to="/PlanetTemplate" state={{ planetKey: 'neptune' }}>Neptune</Link></li>
           </ul>
+        </li>
+
+        <li>
+          {/* Navigates to the path defined by 'to' */}
+          <Link to="/">Artificial Satellite</Link>
         </li>
       </ul>
     </nav>

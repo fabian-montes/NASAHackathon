@@ -244,6 +244,7 @@ export default function PlanetTemplate({
               </svg>
               {sendLabel}
             </button>
+
           </form>
         </div>
       </div>
