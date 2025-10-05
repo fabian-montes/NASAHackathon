@@ -12,7 +12,6 @@ import saturnTexture from '../assets/8k_saturn.jpg';
 import uranusTexture from '../assets/uranus.jpg';
 import neptuneTexture from '../assets/neptune.jpg';
 
-// --- Constants and Data (Unchanged) ---
 const TEXTURES = {
     sun: sunTexture,
     mercury: mercuryTexture,
@@ -26,28 +25,17 @@ const TEXTURES = {
 };
 
 const SOLAR_SYSTEM_DATA = [
-    { name: 'sun', radius: 40, distance: 0, speed: 0, color: 0xffa500 },
-    { name: "mercury", radius: 4, distance: 60, speed: 4.15, color: 0x8c7853 },
-    { name: "venus", radius: 7, distance: 90, speed: 1.62, color: 0xffc649 },
-    { name: "earth", radius: 8, distance: 120, speed: 1.00, color: 0x2233ff },
-    { name: "mars", radius: 6, distance: 150, speed: 0.53, color: 0xcd5c5c },
-    { name: "jupiter", radius: 20, distance: 210, speed: 0.08, color: 0xc88b3a },
-    { name: "saturn", radius: 17, distance: 270, speed: 0.03, color: 0xfad5a5 },
-    { name: "uranus", radius: 12, distance: 330, speed: 0.01, color: 0x4fd0e0 },
-    { name: "neptune", radius: 12, distance: 380, speed: 0.006, color: 0x4166f5 },
-].map(planet => ({
-    ...planet,
-    initialAngle: Math.random() * 2 * Math.PI,
-}));
+    { name: 'sun', radius: 40, color: 0xffa500 },
+    { name: "mercury", radius: 4, color: 0x8c7853 },
+    { name: "venus", radius: 7, color: 0xffc649 },
+    { name: "earth", radius: 8, color: 0x2233ff },
+    { name: "mars", radius: 6, color: 0xcd5c5c },
+    { name: "jupiter", radius: 20, color: 0xc88b3a },
+    { name: "saturn", radius: 17, color: 0xfad5a5 },
+    { name: "uranus", radius: 12, color: 0x4fd0e0 },
+    { name: "neptune", radius: 12, color: 0x4166f5 },
+];
 
-const SCALING_FACTOR = {
-    radius: .5,
-    distance: 10,
-};
-
-// --- Helper & Factory Functions ---
-
-// (createCelestialBody and createLighting are unchanged)
 function createCelestialBody(bodyData, textureLoader) {
     const { name, color } = bodyData;
     const isSun = name === 'sun';
@@ -64,7 +52,7 @@ function createCelestialBody(bodyData, textureLoader) {
         mesh.castShadow = true;
         mesh.receiveShadow = true;
     }
-    textureLoader.load( TEXTURES[name],
+    textureLoader.load(TEXTURES[name],
         (texture) => {
             material.map = texture;
             material.color.set(0xffffff);
@@ -81,56 +69,22 @@ function createCelestialBody(bodyData, textureLoader) {
 
 function createLighting() {
     const lightGroup = new THREE.Group();
-
-    // This light acts like a distant sun, shining on the scene
     const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
-    // Position the light so it shines on the front of the planet
     directionalLight.position.set(10, 5, 20); 
     directionalLight.castShadow = true;
-    
-    // Ambient light adds a little bit of fill light
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-
     lightGroup.add(directionalLight, ambientLight);
     return lightGroup;
 }
 
-/**
- * @param {number} distance
- * @returns {THREE.LineLoop}
- */
-function createOrbit(distance) {
-    const points = []
-    const radius = distance / SCALING_FACTOR.distance
-    const segments = 128
-    for (let i = 0; i <= segments; i++) {
-        const theta = (i / segments) * Math.PI * 2
-        points.push(new THREE.Vector3(Math.cos(theta) * radius, Math.sin(theta) * radius, 0))
-    }
-    
-    const geometry = new THREE.BufferGeometry().setFromPoints(points)
-    const material = new THREE.LineBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.2,
-    })
-    
-    return new THREE.LineLoop(geometry, material)
-}
-
-
-// --- React Component ---
-
 const PlanetRenderer = ({ planet }) => {
-
-    console.log('Planet to render :',planet)
+    console.log('Planet to render:', planet);
     const mountRef = useRef(null);
 
     useEffect(() => {
         if (!mountRef.current) return;
         const currentMount = mountRef.current;
 
-        // --- Core Scene Setup ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
         const camera = new THREE.PerspectiveCamera(
@@ -139,54 +93,35 @@ const PlanetRenderer = ({ planet }) => {
             0.1,
             1000
         );
-        camera.position.z = 50;
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha : true });
+        camera.position.z = 80;
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.setClearColor(0x000000, 0)
-        // renderer.setClearColor(0xFF0000, 1)
+        renderer.setClearColor(0x000000, 0);
         currentMount.appendChild(renderer.domElement);
         
-        // --- Add Objects to the Scene ---
         const textureLoader = new THREE.TextureLoader();
         scene.add(createLighting());
-        // 3. Add stars and orbits to the scene
-        // scene.add(createStars());
 
-        const celestialBodies = SOLAR_SYSTEM_DATA.filter(p => p.name === planet.toLowerCase()).map(data => {
+        const filteredData = SOLAR_SYSTEM_DATA.filter(p => p.name === planet.toLowerCase());
+        const celestialBodies = filteredData.map(data => {
             const body = createCelestialBody(data, textureLoader);
-            body.position.x = data.distance / SCALING_FACTOR.distance;
+            body.position.set(0, 0, 0);
             scene.add(body);
-            
-            // Add an orbit for every planet, but not the sun
-            if (data.name !== 'sun') {
-                const orbit = createOrbit(data.distance);
-                scene.add(orbit);
-            }
-            
             return body;
         });
 
-        // --- Camera Controls, Animation, and Cleanup (Unchanged) ---
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.minDistance = 20;
         controls.maxDistance = 200;
 
-        let clock = new THREE.Clock();
         let animationFrameId;
         const animate = () => {
-            const elapsedTime = clock.getElapsedTime();
-            // celestialBodies[0].rotation.y += 0.001;
-            celestialBodies.forEach((body, index) => {
-                // if (index === 0) return;
-                const data = SOLAR_SYSTEM_DATA[index];
-                body.rotation.y += 0.0025;
-                const angle = elapsedTime * data.speed * 0.1 + data.initialAngle;
-                body.position.x = Math.cos(angle) * (data.distance / SCALING_FACTOR.distance);
-                body.position.y = Math.sin(angle) * (data.distance / SCALING_FACTOR.distance);
+            celestialBodies.forEach(body => {
+                body.rotation.y += 0.005;
             });
 
             controls.update();
@@ -211,7 +146,7 @@ const PlanetRenderer = ({ planet }) => {
             controls.dispose();
             renderer.dispose();
         };
-    }, []);
+    }, [planet]);
 
     return (
         <div 
