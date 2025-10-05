@@ -72,7 +72,7 @@ export default function PlanetTemplate({
       });
       if (!res.ok) throw new Error(await res.text());
       const { text: answer } = await res.json();
-      alert(answer || "(sin respuesta)");
+      alert(answer || 'Hola! Solo puedo hablar de ${activePlanetName}. ');
     } catch (e) {
       alert("Error: " + e.message);
     }
