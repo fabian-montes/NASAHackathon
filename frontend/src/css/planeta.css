@@ -1,0 +1,112 @@
+/* ======== Full-screen layout con posiciones fijadas al viewport ======== */
+.planet-root {
+  position: fixed; /* ocupa toda la pantalla */
+  inset: 0;
+  color: #fff;
+  pointer-events: none; /* evitamos tapar (re-habilitamos en los inputs/botones) */
+
+  /* variables de estilo */
+  --panel-bg: rgba(255,255,255,0.18);
+  --panel-bd: rgba(255,255,255,0.35);
+  --txt: #fff;
+}
+
+/* TÍTULO — esquina superior izquierda (84/972, 42/644) */
+.planet-root .title {
+  position: absolute;
+  left: 8.65vw;  /* 84/972 */
+  top:  6.52vh;  /* 42/644 */
+  margin: 0;
+  color: var(--txt);
+  font-weight: 600;
+  font-size: clamp(34px, 7.4vw, 72px);
+  letter-spacing: 1px;
+  pointer-events: auto;
+}
+
+/* PANEL INFO — esquina superior derecha (right:54/972, top:64/644, width:360/972) */
+.planet-root .desc {
+  position: absolute;
+  right: 5.56vw;        /* 54/972 */
+  top:   9.94vh;        /* 64/644 */
+    width: 18.52vw;   /* antes 37.04vw → 360/972; ahora la mitad */
+  max-width: 260px; /* mitad del max anterior (520px) */
+  min-width: 130px;
+  background: var(--panel-bg);
+  color: var(--txt);
+  border: 1px solid var(--panel-bd);
+  border-radius: 12px;
+  padding: 18px 18px 20px;
+  line-height: 1.4;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  pointer-events: auto;
+}
+.planet-root .desc p { margin: 0; }
+
+/* PLANETA — círculo centro-izquierda (left:300/972, top:144/644, size:430/972) */
+.planet-root .planet-slot {
+  position: absolute;
+  left: 30.86vw;              /* 300/972 */
+  top:  22.36vh;              /* 144/644 */
+  width: clamp(260px, 44.25vmin, 640px); /* cuadrado proporcional a pantalla */
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-image: var(--planet-image); /* si pasas planetImageUrl */
+  background-size: cover;
+  background-position: center;
+  box-shadow:
+    0 0 0 4px rgba(0,0,0,0.35) inset,
+    0 0 60px rgba(0,0,0,0.45) inset,
+    0 10px 28px rgba(0,0,0,0.35);
+  pointer-events: none; /* es decorativo */
+}
+
+/* BLOQUE INFERIOR — (left:108/972, right:84/972, bottom:62/644) */
+.planet-root .qa {
+  position: absolute;
+  left: 11.11vw;  /* 108/972 */
+  right: 8.65vw;  /* 84/972 */
+  bottom: 9.63vh; /* 62/644 */
+  color: var(--txt);
+  pointer-events: auto;
+}
+.planet-root .label {
+  margin: 0 0 10px;
+  font-size: clamp(16px, 2.2vh, 22px);
+  font-weight: 500;
+  color: var(--txt);
+}
+
+/* Input y botón: recuadros blancos con transparencia */
+.planet-root .inputRow {
+  display: grid;
+  grid-template-columns: 1fr 56px;
+  gap: 10px;
+}
+.planet-root .inputRow input {
+  height: 56px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-bd);
+  background: var(--panel-bg);
+  color: var(--txt);
+  padding: 0 16px;
+  outline: none;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25) inset;
+}
+.planet-root .inputRow input::placeholder { color: rgba(255,255,255,0.75); }
+
+.planet-root .send {
+  border: 1px solid var(--panel-bd);
+  border-radius: 10px;
+  background: var(--panel-bg);
+  color: var(--txt);
+  display: grid;
+  place-items: center;
+  transition: transform .08s ease, filter .12s ease;
+}
+.planet-root .send:hover  { filter: brightness(1.05); }
+.planet-root .send:active { transform: translateY(1px); }
+
+/* Contenedor invisible; no necesita estilos, pero por compatibilidad: */
+.planet-root .canvas { position: absolute; inset: 0; }

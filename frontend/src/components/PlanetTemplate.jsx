@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import '../css/estrellas.css'; 
+import '../css/planeta.css'; 
 
 /* Catálogo base con Júpiter (default) y Marte */
 export const PLANETS = {
