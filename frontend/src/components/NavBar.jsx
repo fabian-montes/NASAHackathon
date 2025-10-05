@@ -15,7 +15,10 @@ function NavBar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/about">About Us</Link>
+          <Link to="/About">About Us</Link>
+        </li>
+        <li>
+          <Link to="/SolarSystem">Solar System</Link>
         </li>
         <li>
           <Link to="/PlanetTemplate">Planetas</Link>
