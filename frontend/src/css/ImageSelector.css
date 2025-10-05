@@ -12,4 +12,5 @@
   height: auto;  /* keeps aspect ratio */
   display: block;
   margin-bottom: 130px;
+  -webkit-user-drag: none;
 }
