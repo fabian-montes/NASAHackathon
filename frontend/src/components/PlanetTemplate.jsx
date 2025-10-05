@@ -90,7 +90,7 @@ onSubmit = async (value, ctx) => {
   const userPrompt = `Pregunta del usuario: ${value}`;
 
   try {
-    const res = await fetch("http://localhost:3000/chat", {
+    const res = await fetch("http://localhost:3001/chat", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ prompt: `${system}\n\n${userPrompt}` })
@@ -133,6 +133,25 @@ onSubmit = async (value, ctx) => {
     });
     setValue("");
   };
+  /////////////////////////////////////////////////////////////////////////
+    const handlePlay = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: final.description }),
+      });
+      if (!res.ok) throw new Error("Error al generar audio");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    } catch (e) {
+      alert("Error al reproducir: " + e.message);
+    }
+  };
+  /////////////////////////////////////////////////////////////////////////
 
   return (
     <div className="planet-root">
@@ -148,8 +167,12 @@ onSubmit = async (value, ctx) => {
         <div className="planet-slot" aria-label={`Imagen de ${final.planetName}`} />
 
         <aside className="desc">
-          <p>{final.description}</p>
+        <p>{final.description}</p>
+        <button onClick={handlePlay} className="play-btn" aria-label="Reproducir descripción">
+            🔊 Escuchar descripción
+        </button>
         </aside>
+
 
         <div className="qa">
           <div className="label">{final.questionLabel}</div>
