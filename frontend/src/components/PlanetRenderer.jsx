@@ -51,7 +51,7 @@ const SCALING_FACTOR = {
 function createCelestialBody(bodyData, textureLoader) {
     const { name, color } = bodyData;
     const isSun = name === 'sun';
-    const geometry = new THREE.SphereGeometry(30, 32, 32);
+    const geometry = new THREE.SphereGeometry(30, 512, 512);
     const material = isSun
         ? new THREE.MeshBasicMaterial()
         : new THREE.MeshStandardMaterial({
@@ -80,14 +80,19 @@ function createCelestialBody(bodyData, textureLoader) {
 }
 
 function createLighting() {
-    const lightGroup = new THREE.Group()
-    const sunLight = new THREE.PointLight(0xffffff, 500, 0)
-    sunLight.castShadow = true
-    sunLight.shadow.mapSize.width = 2048
-    sunLight.shadow.mapSize.height = 2048
-    const ambientLight = new THREE.AmbientLight(0xffffff, .7)
-    lightGroup.add(sunLight, ambientLight)
-    return lightGroup
+    const lightGroup = new THREE.Group();
+
+    // This light acts like a distant sun, shining on the scene
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    // Position the light so it shines on the front of the planet
+    directionalLight.position.set(10, 5, 20); 
+    directionalLight.castShadow = true;
+    
+    // Ambient light adds a little bit of fill light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+
+    lightGroup.add(directionalLight, ambientLight);
+    return lightGroup;
 }
 
 /**
@@ -139,8 +144,8 @@ const PlanetRenderer = ({ planet }) => {
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        // renderer.setClearColor(0x000000, 0)
-        renderer.setClearColor(0xFF0000, 1)
+        renderer.setClearColor(0x000000, 0)
+        // renderer.setClearColor(0xFF0000, 1)
         currentMount.appendChild(renderer.domElement);
         
         // --- Add Objects to the Scene ---
