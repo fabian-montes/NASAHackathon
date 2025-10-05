@@ -12,41 +12,39 @@ import planetD from '../assets/planetD.jpg';
 // import karlaFile from './assets/karla.jpg';
 // import adyleneFile from './assets/adylene.jpg';
 // import blancaFile from './assets/blanca.jpg';
-// import fabianFile from './assets/fabian.jpg';
+import fabianFile from '../assets/fabian.png';
 // import juanFile from './assets/juan.jpg';
-
-import silhouette from '../assets/silhouette.png';
 
 const teamMembers = [
   {
     name: "Aylin Ximena Ocampo Vera",
     backgroundFile: planetD,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
   {
     name: "Karla Irais De Florencio Romero",
     backgroundFile: planetB,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
   {
     name: "Adylene Baylon Cuahutlapantzi",
     backgroundFile: planetA,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
   {
     name: "Blanca Flor Visca Cocotzin",
     backgroundFile: planetB,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
   {
     name: "Fabián Márquez Montes",
     backgroundFile: planetC,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
   {
     name: "Juan Diego Vázquez Cabrera",
     backgroundFile: planetA,
-    mainImageFile: silhouette
+    mainImageFile: fabianFile
   },
 ];
 

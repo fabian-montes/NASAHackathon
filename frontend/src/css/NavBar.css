@@ -1,0 +1,68 @@
+/* --- Base Navigation Bar Container --- */
+.navbar {
+  /* Use Flexbox for alignment */
+  display: flex;
+  /* Space out the logo and the links */
+  justify-content: space-between;
+  /* Vertically center items */
+  align-items: center;
+  
+  background-color: #333; /* Dark background (adjust as needed) */
+  color: white;
+  padding: 0 40px; /* Padding on the sides */
+  height: 60px; /* Standard height */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Logo Styling (Optional) --- */
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  /* The logo is naturally aligned to the left due to justify-content: space-between */
+}
+
+/* --- Navigation Links List --- */
+.nav-links {
+  /* Reset list styles */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+  /* Use Flexbox to display links horizontally */
+  display: flex;
+  
+  /* This aligns the list itself to the right within the navbar */
+  /* (Due to justify-content: space-between on the .navbar) */
+}
+
+/* --- Individual List Item --- */
+.nav-links li {
+    text-align: center;
+    margin-left: 50px; /* Spacing between menu items */
+    width: 100px;
+}
+
+/* --- Link Styling --- */
+.nav-links a {
+  /* Reset link styles */
+  text-decoration: none;
+  color: white;
+  font-size: 1.1em;
+  padding: 18px 0; /* Vertical padding to make the entire link clickable */
+  display: block; /* Makes padding work on the link */
+  
+  /* Add a smooth transition for the color and the hover line effect */
+  transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+  
+  /* Initial state for the underline hover effect (transparent) */
+  border-bottom: 3px solid transparent; 
+}
+
+/* --- Hover Effect: Change Color & Add an Underline --- */
+.nav-links a:hover,
+.nav-links a:focus {
+  color: #00bcd4; /* A vibrant color for hover (adjust as needed) */
+  
+  /* The underline effect: change the transparent border to a solid color */
+  border-bottom: 3px solid #00bcd4; 
+}

@@ -1,10 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import '../css/NavBar.css';
+
 function NavBar() {
   return (
-    <nav>
-      <ul>
+    <nav className='navbar'>
+      <div className='logo'>
+        My logo
+      </div>
+      <ul className='nav-links'>
         <li>
           {/* Navigates to the path defined by 'to' */}
           <Link to="/">Home</Link>
@@ -14,6 +19,9 @@ function NavBar() {
         </li>
         <li>
           <Link to="/PlanetTemplate">Planetas</Link>
+        </li>
+        <li>
+          <Link to="/Satelite">Satelite</Link>
         </li>
       </ul>
     </nav>

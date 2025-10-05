@@ -1,0 +1,30 @@
+.about-project-container {
+  /* Fondo para contrastar con el negro de la sección "Meet Our Team" */
+  background-color: #f4f4f4; /* Gris claro */
+  color: #333; /* Texto oscuro */
+  
+  /* Espaciado interno */
+  padding: 80px 40px;
+  
+  /* Centrar el contenido y limitar el ancho para mejor lectura */
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-project-container h2 {
+  font-size: 2.5em;
+  color: #555; /* Un tono de gris para el encabezado */
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ccc; /* Separador sutil */
+  padding-bottom: 10px;
+  display: inline-block; /* Ajusta el ancho de la línea al texto */
+}
+
+.project-description {
+  font-size: 1.1em;
+  line-height: 1.6; /* Mayor interlineado para facilitar la lectura */
+  text-align: justify; /* Justifica el texto para un bloque limpio */
+  margin: 0 auto;
+  max-width: 700px; /* Limita el ancho de la columna de texto */
+}
