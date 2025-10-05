@@ -1,11 +1,13 @@
 import React from 'react';
+import ProfileCard from './ProfileCard';
+import MeetOurTeamSection from './MeetOurTeamSection';
 
-function Home() {
+function About() {
   return (
     <>
-      <h1>Home to Us</h1>
+      <MeetOurTeamSection/>
     </>
   );
 }
 
-export default Home;
+export default About;

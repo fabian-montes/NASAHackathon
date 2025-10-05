@@ -1,0 +1,21 @@
+.meet-our-team-container {
+  background-color: #000; /* Black background like your image */
+  color: #fff; /* White text */
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.meet-our-team-container h1 {
+  font-family: 'Comic Sans MS', cursive; /* Or a similar playful font */
+  font-size: 3em;
+  margin-bottom: 50px;
+}
+
+.profile-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 30px;
+  justify-items: center;
+  max-width: 1000px; /* Adjust as needed */
+  margin: 0 auto;
+}
