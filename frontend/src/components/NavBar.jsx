@@ -23,9 +23,6 @@ function NavBar() {
         <li>
           <Link to="/PlanetTemplate">Planetas</Link>
         </li>
-        <li>
-          <Link to="/Satelite">Satelite</Link>
-        </li>
       </ul>
     </nav>
   );

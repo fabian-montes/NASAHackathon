@@ -3,7 +3,7 @@ import SpinningSphere from './SpinningSphere';
 
 import '../css/Home.css';
 // import earthTexture from '../assets/planetA.jpg'; 
-import earthTexture from '../assets/fabian.png'; 
+import earthTexture from '../assets/earth.jpg'; 
 import moonTexture from '../assets/planetA.jpg';
 import satelliteTexture from '../assets/planetB.jpg';
 import planetTexture from '../assets/planetC.jpg';
