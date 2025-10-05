@@ -1,0 +1,10 @@
+.sphere-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Or you can style the canvas directly */
+.full-size-canvas {
+  width: 100%;
+  height: 100%;
+}
