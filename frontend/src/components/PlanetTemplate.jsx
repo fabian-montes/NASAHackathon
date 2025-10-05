@@ -183,6 +183,24 @@ export default function PlanetTemplate({
     setValue("");
   };
 
+  const handlePlay = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: final.description }),
+      });
+      if (!res.ok) throw new Error("Error al generar audio");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    } catch (e) {
+      alert("Error al reproducir: " + e.message);
+    }
+  };
+
   return (
     <div className="planet-root">
       <div
@@ -202,7 +220,10 @@ export default function PlanetTemplate({
         />
 
         <aside className="desc">
-          <p>{final.description}</p>
+        <p>{final.description}</p>
+        <button onClick={handlePlay} className="play-btn" aria-label="Reproducir descripción">
+            🔊 Escuchar descripción
+        </button>
         </aside>
 
         <div className="qa">
