@@ -14,8 +14,8 @@
 }
 
 .profile-image-wrapper {
-  width: 150px; /* Diameter of the circle */
-  height: 150px; /* Diameter of the circle */
+  width: 200px; /* Diameter of the circle */
+  height: 200px; /* Diameter of the circle */
   border-radius: 50%; /* Makes it a circle */
   background-size: cover; /* Ensures background image covers the area */
   background-position: center; /* Centers the background image */
@@ -32,7 +32,7 @@
 .profile-main-image {
   width: 80%; /* Adjust size of the silhouette */
   height: 80%; /* Adjust size of the silhouette */
-  object-fit: contain; /* Ensures the image fits without cropping */
+  object-fit: cover; /* Ensures the image fits without cropping */
   /* filter: invert(100%); If your silhouettes are white on transparent, this will make them black */
                         /* Or remove if your silhouettes are already dark */
   position: absolute;
@@ -40,16 +40,32 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  transition: transform 0.3s ease-in-out;
+  transition: opacity 0.4s ease-in-out, filter 0.4s ease-in-out;
+
+  /* 2. Start with the "blacked out" filter and 0 opacity */
+  /* This ensures the image starts completely black and invisible */
+  opacity: 1;
+  filter: brightness(0) hue-rotate(0deg); /* brightness(0) makes it black */
 }
 
-.profile-image-wrapper:hover .profile-main-image {
-  transform: translate(-50%, -50%) scale(1.05); /* Scales the silhouette 5% bigger than normal */
+.profile-card:hover .profile-image-wrapper {
+  transform: scale(1.15); /* Keep wrapper scale effect */
+}
+
+.profile-card:hover .profile-main-image {
+  /* 3. On hover, revert to normal brightness and full opacity */
+  opacity: 1; /* Make the image fully visible */
+  filter: brightness(1) hue-rotate(0deg); /* Revert to normal brightness */
+  
+  /* Keep the slight scale effect on the silhouette if you like it */
+  transform: translate(-50%, -50%) scale(1.05); 
 }
 
 .profile-name {
-  font-family: sans-serif; /* Choose a font that fits */
+  font-family: sans-serif;
   font-size: 0.9em;
   color: #fff;
   line-height: 1.3;
+  margin-top: 15px; /* Adjust as needed */
+  transition: margin 0.3s ease-in-out; /* Smooth transition for margin if wrapper scales */
 }

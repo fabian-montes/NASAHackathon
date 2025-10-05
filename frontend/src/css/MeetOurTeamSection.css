@@ -16,6 +16,6 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
   gap: 30px;
   justify-items: center;
-  max-width: 1000px; /* Adjust as needed */
+  max-width: 750px; /* Adjust as needed */
   margin: 0 auto;
 }
